@@ -183,18 +183,22 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2301($doc as element(), $tran as xs:string)
+declare function xmlconv:rule_2301_2320($doc as element(),
+                                        $tran as xs:string,
+                                        $range_min as xs:decimal,
+                                        $range_max as xs:decimal,
+                                        $rule as xs:string)
 as element(div) {
 
-  let $err_text := "The calculated specific charge of F-gases d is not in the expected range
-    (0.2 and 1000 kg/piece). Please make sure you correctly reported the amounts of gases in
+  let $err_text := concat("The calculated specific charge of F-gases d is not in the expected range
+    (", $range_min," and ", $range_max, " kg/piece). Please make sure you correctly reported the amounts of gases in
     units of tonnes, not in kilograms. Please revise your data or provide an explanation to the
-    calculated specific charge."
+    calculated specific charge.")
 
   let $err_flag :=
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
-        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)][Amount > 0.2][Amount < 1000])
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)][Amount > $range_min][Amount < $range_max])
           then fn:false()
           else fn:true()
       else fn:false()
@@ -205,7 +209,7 @@ as element(div) {
       else $xmlconv:WARNING
 
   return uiutil:buildRuleResult(
-    "2031", $tran, $err_text, $err_status, $err_flag, (), "")
+    $rule, $tran, $err_text, $err_status, $err_flag, (), "")
 };
 
 
@@ -226,7 +230,73 @@ as element(div)
 
     let $r2301 :=
         for $tran in ('11A01')
-            return xmlconv:rule_2301($doc, $tran)
+            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 1000.0, "2031")
+
+    let $r2302 :=
+        for $tran in ('11A07', '11A08', '11A09', '11A10', '11A11', '11A12')
+            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 300.0, "2032")
+
+    let $r2303 :=
+        for $tran in ('11B01', '11B02', '11B03', '11B04', '11B05', '11B06',
+                      '11B07', '11B08', '11B09', '11B10', '11B11', '11B14')
+            return xmlconv:rule_2301_2320($doc, $tran, 1, 1000.0, "2033")
+
+    let $r2304 :=
+        for $tran in ('11B12')
+            return xmlconv:rule_2301_2320($doc, $tran, 1, 800.0, "2034")
+
+    let $r2305 :=
+        for $tran in ('11B13')
+            return xmlconv:rule_2301_2320($doc, $tran, 1, 400.0, "2035")
+
+    let $r2306 :=
+        for $tran in ('11C')
+            return xmlconv:rule_2301_2320($doc, $tran, 0.15, 0.5, "2036")
+
+    let $r2307 :=
+        for $tran in ('11D01', '11D03')
+            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 1000, "2037")
+
+    let $r2308 :=
+        for $tran in ('11D02')
+            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 300, "2038")
+
+    let $r2312 :=
+        for $tran in ('11E03', '11E04')
+            return xmlconv:rule_2301_2320($doc, $tran, 10, 5000, "2312")
+
+    let $r2313 :=
+        for $tran in ('11F01')
+            return xmlconv:rule_2301_2320($doc, $tran, 0.3, 1.5, "2313")
+
+    let $r2314 :=
+        for $tran in ('11F02')
+            return xmlconv:rule_2301_2320($doc, $tran, 7, 20, "2314")
+
+    let $r2315 :=
+        for $tran in ('11F03')
+            return xmlconv:rule_2301_2320($doc, $tran, 0.5, 1.5, "2315")
+
+    let $r2316 :=
+        for $tran in ('11F04')
+            return xmlconv:rule_2301_2320($doc, $tran, 0.7, 1.5, "2316")
+
+    let $r2317 :=
+        for $tran in ('11F05')
+            return xmlconv:rule_2301_2320($doc, $tran, 0.7, 2.5, "2317")
+
+    let $r2318 :=
+        for $tran in ('11F06')
+            return xmlconv:rule_2301_2320($doc, $tran, 5, 35, "2318")
+
+    let $r2319 :=
+        for $tran in ('11F07')
+            return xmlconv:rule_2301_2320($doc, $tran, 100, 1000, "2319")
+
+    let $r2320 :=
+        for $tran in ('11F08')
+            return xmlconv:rule_2301_2320($doc, $tran, 2, 10, "2320")
+
 
   return
     <div class="errors">
@@ -235,6 +305,22 @@ as element(div)
         {$r2017}
         {$r2300}
         {$r2301}
+        {$r2302}
+        {$r2303}
+        {$r2304}
+        {$r2305}
+        {$r2306}
+        {$r2307}
+        {$r2308}
+        {$r2312}
+        {$r2313}
+        {$r2314}
+        {$r2315}
+        {$r2316}
+        {$r2317}
+        {$r2318}
+        {$r2319}
+        {$r2320}
     </div>
 
 };
