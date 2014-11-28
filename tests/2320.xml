@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FGasesReporting>
+	<F7_s11EquImportTable>
+		<UISelectedTransactions>
+			<tr_11F08>true</tr_11F08>
+		</UISelectedTransactions>
+		<Comment>
+			<tr_11F08>comment</tr_11F08>
+		</Comment>
+		<AmountOfImportedEquipment>
+			<tr_11F08>
+				<Code></Code>
+				<Amount>1</Amount>
+			</tr_11F08>
+		</AmountOfImportedEquipment>
+	</F7_s11EquImportTable>
+</FGasesReporting>
