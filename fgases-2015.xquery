@@ -183,6 +183,24 @@ as element(div) {
 };
 
 
+declare function xmlconv:rule_2041($doc as element())
+as element(div) {
+
+  let $err_text := "Please provide an explanation for accountancy adjustments"
+
+  let $err_flag :=
+    for $gas in $doc/F3A_S6A_IA_HFCs/Gas
+    where $gas/tr_06V[number(Amount) != 0]
+    return
+      if ($gas/tr_06V/Comment = '')
+        then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
+        else ()
+
+
+  return uiutil:buildRuleResult("2041", "6V", $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
+};
+
+
 declare function xmlconv:rule_2042($doc as element())
 as element(div) {
 
@@ -278,6 +296,7 @@ as element(div)
             return xmlconv:rule_2017($doc, $tran)
 
     let $r2040 := xmlconv:rule_2040($doc)
+    let $r2041 := xmlconv:rule_2041($doc)
     let $r2042 := xmlconv:rule_2042($doc)
     let $r2043 := xmlconv:rule_2043($doc)
 
@@ -360,6 +379,7 @@ as element(div)
         {$r2016}
         {$r2017}
         {$r2040}
+        {$r2041}
         {$r2042}
         {$r2043}
         {$r2300}
