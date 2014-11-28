@@ -138,9 +138,12 @@ declare variable $source_url := "http://cdrtest.eionet.europa.eu/de/colt_cs2a/co
 declare function xmlconv:rule_2016($doc as element())
 as element(div) {
 
-  let $err_text := "You reported on own destruction in section 1B. Please accordingly select to be a destruction company in the activity selection and report subsequently in section 8."
+  let $err_text := "You reported on own destruction in section 1B.
+    Please accordingly select to be a destruction company in the activity selection and report subsequently in section 8."
 
-  let $err_flag := sum($doc/F1_S1_4_ProdImpExp/Gas/tr_01B/Amount[number(.)=number(.)]) > 1000 and $doc/GeneralReportData/Activities/D != 'true'
+  let $err_flag :=
+    sum($doc/F1_S1_4_ProdImpExp/Gas/tr_01B[number(Amount) > 1000])
+    and $doc/GeneralReportData/Activities/D != 'true'
 
   return uiutil:buildRuleResult("2016", "1B", $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
 };
@@ -153,11 +156,30 @@ as element(div) {
 
   let $err_flag :=
     for $gas in $doc/F1_S1_4_ProdImpExp/Gas
-    where $gas/*[name()=concat('tr_0', $tran)]/Amount[number(.)=number(.)] < 0
+    where $gas/*[name()=concat('tr_0', $tran)][number(Amount) < 0]
     return
       data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
 
   return uiutil:buildRuleResult("2017", $tran, $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
+};
+
+
+declare function xmlconv:rule_2040($doc as element())
+as element(div) {
+
+  let $err_text := "Please explain the 'other' intended apllication
+    / why the application its unknown."
+
+  let $err_flag :=
+    for $gas in $doc/F3A_S6A_IA_HFCs/Gas
+    where $gas/tr_06T[number(Amount) > 0]
+    return
+      if ($gas/tr_06T/Comment = '')
+        then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
+        else ()
+
+
+  return uiutil:buildRuleResult("2040", "6T", $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
 };
 
 
@@ -198,7 +220,7 @@ as element(div) {
   let $err_flag :=
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
-        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)][Amount > $range_min][Amount < $range_max])
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)][number(Amount)][Amount > $range_min][Amount < $range_max])
           then fn:false()
           else fn:true()
       else fn:false()
@@ -223,6 +245,8 @@ as element(div)
     let $r2017 :=
         for $tran in ('1E', '3C', '4D', '4E', '4I', '4J')
             return xmlconv:rule_2017($doc, $tran)
+
+    let $r2040 := xmlconv:rule_2040($doc)
 
     let $r2300 :=
         for $tran in ('11P', '11H04')
@@ -302,6 +326,7 @@ as element(div)
         <h4>Error details</h4>
         {$r2016}
         {$r2017}
+        {$r2040}
         {$r2300}
         {$r2301}
         {$r2302}

@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FGasesReporting>
-	<F3A_S6A_IA_HFCs>
-		<Gas>
-			<GasCode>2</GasCode>
-			<tr_06T>
-				<Code>06T</Code>
-				<Amount>1</Amount>
-				<Comment>test</Comment>
-			</tr_06T>
-		</Gas>
-		<Gas>
-			<GasCode>3</GasCode>
-			<tr_06T>
-				<Code>06T</Code>
-				<Amount>1</Amount>
-				<Comment>test</Comment>
-			</tr_06T>
-		</Gas>
-		<Gas>
-			<GasCode>4</GasCode>
-			<tr_06T>
-				<Code>06T</Code>
-				<Amount>1</Amount>
-				<Comment>test</Comment>
-			</tr_06T>
-		</Gas>
-	</F3A_S6A_IA_HFCs>
+  <ReportedGases>
+      <GasId>3</GasId>
+      <Code>HFC-32</Code>
+      <Name>HFC-32 (difluoromethane)</Name>
+  </ReportedGases>
+  <ReportedGases>
+      <GasId>4</GasId>
+      <Code>HFC-41</Code>
+      <Name>HFC-41 (fluoromethane, methyl fluoride)</Name>
+  </ReportedGases>
+  <F3A_S6A_IA_HFCs>
+    <Gas>
+      <GasCode>3</GasCode>
+      <tr_06T>
+        <Code>06T</Code>
+        <Amount>100</Amount>
+        <Comment>sssss</Comment>
+      </tr_06T>
+    </Gas>
+    <Gas>
+      <GasCode>4</GasCode>
+      <tr_06T>
+        <Code>06T</Code>
+        <Amount>100</Amount>
+        <Comment></Comment>
+      </tr_06T>
+    </Gas>
+  </F3A_S6A_IA_HFCs>
 </FGasesReporting>
