@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FGasesReporting>
+	<F3A_S6A_IA_HFCs>
+		<Gas>
+			<GasCode>2</GasCode>
+			<tr_06T>
+				<Code>06T</Code>
+				<Amount>1</Amount>
+				<Comment>test</Comment>
+			</tr_06T>
+		</Gas>
+		<Gas>
+			<GasCode>3</GasCode>
+			<tr_06T>
+				<Code>06T</Code>
+				<Amount>1</Amount>
+				<Comment>test</Comment>
+			</tr_06T>
+		</Gas>
+		<Gas>
+			<GasCode>4</GasCode>
+			<tr_06T>
+				<Code>06T</Code>
+				<Amount>1</Amount>
+				<Comment>test</Comment>
+			</tr_06T>
+		</Gas>
+	</F3A_S6A_IA_HFCs>
+</FGasesReporting>
