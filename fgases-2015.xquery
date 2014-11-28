@@ -175,23 +175,52 @@ as element(div) {
 
 };
 
-declare function xmlconv:rule_2300($doc as element(), $gas as xs:string)
+
+declare function xmlconv:rule_2300($doc as element(), $tran as xs:string)
 as element(div) {
 
-    let $ERR_TEXT := "The calculated specific charge of F-gases exceeds 1000kg/tonne; therefore a value or unit must be incorrect. Please revise reported data or units."
+  let $err_text := "The calculated specific charge of F-gases exceeds 1000kg/tonne;
+    therefore a value or unit must be incorrect. Please revise reported data or units."
 
-    let $condition :=
-        $doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $gas)] = 'true'
+  let $err_flag :=
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
+      then
+        if ($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran, '_Unit')] = 'metrictonnes')
+          then
+            if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount > 1000)
+              then fn:true()
+              else fn:false()
+          else fn:false()
+      else fn:false()
 
-    return uiutil:buildRuleResult(
-        "2030",
-        $gas,
-        $ERR_TEXT,
-        $xmlconv:BLOCKER,
-        $condition,
-        (),
-        "")
+  return uiutil:buildRuleResult("2030", $tran, $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
 
+};
+
+
+declare function xmlconv:rule_2301($doc as element(), $tran as xs:string)
+as element(div) {
+
+  let $err_text := "The calculated specific charge of F-gases d is not in the expected range
+    (0.2 and 1000 kg/piece). Please make sure you correctly reported the amounts of gases in
+    units of tonnes, not in kilograms. Please revise your data or provide an explanation to the
+    calculated specific charge."
+
+  let $err_flag :=
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
+      then
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)][Amount > 0.2][Amount < 1000])
+          then fn:false()
+          else fn:true()
+      else fn:false()
+
+  let $err_status :=
+    if ($doc/F7_s11EquImportTable/Comment/*[name()=concat('tr_', $tran)] = '')
+      then $xmlconv:BLOCKER
+      else $xmlconv:WARNING
+
+  return uiutil:buildRuleResult(
+    "2031", $tran, $err_text, $err_status, $err_flag, (), "")
 };
 
 
@@ -207,8 +236,12 @@ as element(div)
             return xmlconv:rule_2017($doc, $item)
 
     let $r2300 :=
-        for $item in ('11P', '11H04')
-            return xmlconv:rule_2300($doc, $item)
+        for $tran in ('11P', '11H04')
+            return xmlconv:rule_2300($doc, $tran)
+
+    let $r2301 :=
+        for $tran in ('11A01')
+            return xmlconv:rule_2301($doc, $tran)
 
   return
     <div class="errors">
@@ -216,6 +249,7 @@ as element(div)
         {$r2016}
         {$r2017}
         {$r2300}
+        {$r2301}
     </div>
 
 };
