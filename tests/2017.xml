@@ -1,5 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FGasesReporting>
+    <ReportedGases>
+        <GasGroup>HFCs</GasGroup>
+        <GasId>3</GasId>
+        <Code>HFC-32</Code>
+        <Name>HFC-32 (difluoromethane)</Name>
+        <IsBlend>false</IsBlend>
+        <IsCustomComposition>false</IsCustomComposition>
+        <PreparationCompositions></PreparationCompositions>
+        <GWP_AR4_AnnexIV>675</GWP_AR4_AnnexIV>
+        <GWP_AR4_HFC>675</GWP_AR4_HFC>
+        <BlendComponents>
+            <Component>
+                <ComponentId>3</ComponentId>
+                <Code>HFC-32</Code>
+                <Percentage>100</Percentage>
+                <IsOther>false</IsOther>
+                <GWP_AR4_AnnexIV>675</GWP_AR4_AnnexIV>
+                <GWP_AR4_HFC>675</GWP_AR4_HFC>
+            </Component>
+        </BlendComponents>
+    </ReportedGases>
+    <ReportedGases>
+        <GasGroup>HFCs</GasGroup>
+        <GasId>4</GasId>
+        <Code>HFC-41</Code>
+        <Name>HFC-41 (fluoromethane, methyl fluoride)</Name>
+        <IsBlend>false</IsBlend>
+        <IsCustomComposition>false</IsCustomComposition>
+        <PreparationCompositions></PreparationCompositions>
+        <GWP_AR4_AnnexIV>92</GWP_AR4_AnnexIV>
+        <GWP_AR4_HFC>92</GWP_AR4_HFC>
+        <BlendComponents>
+            <Component>
+                <ComponentId>4</ComponentId>
+                <Code>HFC-41</Code>
+                <Percentage>100</Percentage>
+                <IsOther>false</IsOther>
+                <GWP_AR4_AnnexIV>92</GWP_AR4_AnnexIV>
+                <GWP_AR4_HFC>92</GWP_AR4_HFC>
+            </Component>
+        </BlendComponents>
+    </ReportedGases>
     <F1_S1_4_ProdImpExp>
         <Gas>
             <GasCode>3</GasCode>
