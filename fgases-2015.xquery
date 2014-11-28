@@ -255,15 +255,15 @@ as element(div)
 
     let $r2307 :=
         for $tran in ('11D01', '11D03')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 1000, "2037")
+            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 1000.0, "2037")
 
     let $r2308 :=
         for $tran in ('11D02')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 300, "2038")
+            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 300.0, "2038")
 
     let $r2312 :=
         for $tran in ('11E03', '11E04')
-            return xmlconv:rule_2301_2320($doc, $tran, 10, 5000, "2312")
+            return xmlconv:rule_2301_2320($doc, $tran, 10.0, 5000.0, "2312")
 
     let $r2313 :=
         for $tran in ('11F01')
@@ -271,7 +271,7 @@ as element(div)
 
     let $r2314 :=
         for $tran in ('11F02')
-            return xmlconv:rule_2301_2320($doc, $tran, 7, 20, "2314")
+            return xmlconv:rule_2301_2320($doc, $tran, 7.0, 20.0, "2314")
 
     let $r2315 :=
         for $tran in ('11F03')
@@ -287,15 +287,15 @@ as element(div)
 
     let $r2318 :=
         for $tran in ('11F06')
-            return xmlconv:rule_2301_2320($doc, $tran, 5, 35, "2318")
+            return xmlconv:rule_2301_2320($doc, $tran, 5.0, 35.0, "2318")
 
     let $r2319 :=
         for $tran in ('11F07')
-            return xmlconv:rule_2301_2320($doc, $tran, 100, 1000, "2319")
+            return xmlconv:rule_2301_2320($doc, $tran, 100.0, 1000.0, "2319")
 
     let $r2320 :=
         for $tran in ('11F08')
-            return xmlconv:rule_2301_2320($doc, $tran, 2, 10, "2320")
+            return xmlconv:rule_2301_2320($doc, $tran, 2.0, 10.0, "2320")
 
 
   return
