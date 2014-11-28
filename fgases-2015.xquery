@@ -153,20 +153,20 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2017($doc as element())
+declare function xmlconv:rule_2017($doc as element(), $transaction as xs:string)
 as element(div) {
 
     let $ERR_TEXT := "A negative amount here is implausible, please revise your data."
 
     let $condition :=
         for $gas in $doc/F1_S1_4_ProdImpExp/Gas
-        where $gas/tr_01E/Amount[number(.)=number(.)] < 0
+        where $gas/*[name()=concat('tr_0', $transaction)]/Amount[number(.)=number(.)] < 0
         return
             data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
 
     return uiutil:buildRuleResult(
         "2017",
-        "1E",
+        $transaction,
         $ERR_TEXT,
         $xmlconv:BLOCKER,
         count($condition)>0,
@@ -175,19 +175,47 @@ as element(div) {
 
 };
 
+declare function xmlconv:rule_2300($doc as element(), $gas as xs:string)
+as element(div) {
+
+    let $ERR_TEXT := "The calculated specific charge of F-gases exceeds 1000kg/tonne; therefore a value or unit must be incorrect. Please revise reported data or units."
+
+    let $condition :=
+        $doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $gas)] = 'true'
+
+    return uiutil:buildRuleResult(
+        "2030",
+        $gas,
+        $ERR_TEXT,
+        $xmlconv:BLOCKER,
+        $condition,
+        (),
+        "")
+
+};
+
+
 declare function xmlconv:validateReport($url as xs:string)
 as element(div)
 {
-  let $doc := fn:doc($url)/FGasesReporting
+    let $doc := fn:doc($url)/FGasesReporting
 
-  let $r2016 := xmlconv:rule_2016($doc)
-  let $r2017 := xmlconv:rule_2017($doc)
+    let $r2016 := xmlconv:rule_2016($doc)
+
+    let $r2017 :=
+        for $item in ('1E', '3C', '4D', '4E', '4I', '4J1E')
+            return xmlconv:rule_2017($doc, $item)
+
+    let $r2300 :=
+        for $item in ('11P', '11H04')
+            return xmlconv:rule_2300($doc, $item)
 
   return
     <div class="errors">
         <h4>Error details</h4>
         {$r2016}
         {$r2017}
+        {$r2300}
     </div>
 
 };

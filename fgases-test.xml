@@ -156,7 +156,7 @@
             </tr_01A>
             <tr_01B>
                 <Code>01B</Code>
-                <Amount>500</Amount>
+                <Amount>2000</Amount>
             </tr_01B>
             <tr_01C>
                 <Code>01C</Code>
@@ -170,7 +170,7 @@
             </tr_01D>
             <tr_01E>
                 <Code>01E</Code>
-                <Amount>-111</Amount>
+                <Amount>-1</Amount>
             </tr_01E>
             <tr_01F>
                 <Code>01F</Code>
@@ -289,7 +289,7 @@
             </tr_01A>
             <tr_01B>
                 <Code>01B</Code>
-                <Amount>600</Amount>
+                <Amount>100</Amount>
             </tr_01B>
             <tr_01C>
                 <Code>01C</Code>
@@ -379,7 +379,7 @@
             </tr_04D>
             <tr_04E>
                 <Code>04E</Code>
-                <Amount></Amount>
+                <Amount>-1</Amount>
             </tr_04E>
             <tr_04F>
                 <Code>04F</Code>
