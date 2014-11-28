@@ -138,41 +138,26 @@ declare variable $source_url := "http://cdrtest.eionet.europa.eu/de/colt_cs2a/co
 declare function xmlconv:rule_2016($doc as element())
 as element(div) {
 
-    let $ERR_TEXT := "You reported on own destruction in section 1B. Please accordingly select to be a destruction company in the activity selection and report subsequently in section 8."
+  let $err_text := "You reported on own destruction in section 1B. Please accordingly select to be a destruction company in the activity selection and report subsequently in section 8."
 
-    let $condition := sum($doc/F1_S1_4_ProdImpExp/Gas/tr_01B/Amount[number(.)=number(.)]) > 1000 and $doc/GeneralReportData/Activities/D != 'true'
+  let $err_flag := sum($doc/F1_S1_4_ProdImpExp/Gas/tr_01B/Amount[number(.)=number(.)]) > 1000 and $doc/GeneralReportData/Activities/D != 'true'
 
-    return uiutil:buildRuleResult(
-        "2016",
-        "1B",
-        $ERR_TEXT,
-        $xmlconv:BLOCKER,
-        $condition,
-        (),
-        "")
+  return uiutil:buildRuleResult("2016", "1B", $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
 };
 
 
-declare function xmlconv:rule_2017($doc as element(), $transaction as xs:string)
+declare function xmlconv:rule_2017($doc as element(), $tran as xs:string)
 as element(div) {
 
-    let $ERR_TEXT := "A negative amount here is implausible, please revise your data."
+  let $err_text := "A negative amount here is implausible, please revise your data."
 
-    let $condition :=
-        for $gas in $doc/F1_S1_4_ProdImpExp/Gas
-        where $gas/*[name()=concat('tr_0', $transaction)]/Amount[number(.)=number(.)] < 0
-        return
-            data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
+  let $err_flag :=
+    for $gas in $doc/F1_S1_4_ProdImpExp/Gas
+    where $gas/*[name()=concat('tr_0', $tran)]/Amount[number(.)=number(.)] < 0
+    return
+      data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
 
-    return uiutil:buildRuleResult(
-        "2017",
-        $transaction,
-        $ERR_TEXT,
-        $xmlconv:BLOCKER,
-        count($condition)>0,
-        $condition,
-        "Invalid gases are: ")
-
+  return uiutil:buildRuleResult("2017", $tran, $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
 };
 
 
@@ -232,8 +217,8 @@ as element(div)
     let $r2016 := xmlconv:rule_2016($doc)
 
     let $r2017 :=
-        for $item in ('1E', '3C', '4D', '4E', '4I', '4J1E')
-            return xmlconv:rule_2017($doc, $item)
+        for $tran in ('1E', '3C', '4D', '4E', '4I', '4J')
+            return xmlconv:rule_2017($doc, $tran)
 
     let $r2300 :=
         for $tran in ('11P', '11H04')
