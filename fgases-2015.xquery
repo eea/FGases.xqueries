@@ -239,15 +239,15 @@ as element(div)
     let $r2303 :=
         for $tran in ('11B01', '11B02', '11B03', '11B04', '11B05', '11B06',
                       '11B07', '11B08', '11B09', '11B10', '11B11', '11B14')
-            return xmlconv:rule_2301_2320($doc, $tran, 1, 1000.0, "2033")
+            return xmlconv:rule_2301_2320($doc, $tran, 1.0, 1000.0, "2033")
 
     let $r2304 :=
         for $tran in ('11B12')
-            return xmlconv:rule_2301_2320($doc, $tran, 1, 800.0, "2034")
+            return xmlconv:rule_2301_2320($doc, $tran, 1.0, 800.0, "2034")
 
     let $r2305 :=
         for $tran in ('11B13')
-            return xmlconv:rule_2301_2320($doc, $tran, 1, 400.0, "2035")
+            return xmlconv:rule_2301_2320($doc, $tran, 1.0, 400.0, "2035")
 
     let $r2306 :=
         for $tran in ('11C')
@@ -296,7 +296,6 @@ as element(div)
     let $r2320 :=
         for $tran in ('11F08')
             return xmlconv:rule_2301_2320($doc, $tran, 2.0, 10.0, "2320")
-
 
   return
     <div class="errors">
