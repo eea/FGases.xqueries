@@ -183,6 +183,24 @@ as element(div) {
 };
 
 
+declare function xmlconv:rule_2042($doc as element())
+as element(div) {
+
+  let $err_text := "The totals reported for intended applications (6W)
+    should match the totals reported as placed on the Union market (6X).
+    Please revise your data."
+
+  let $err_flag :=
+    for $gas in $doc/F3A_S6A_IA_HFCs/Gas
+    return
+      if ($gas/tr_06W/Amount != $gas/tr_06X/Amount)
+        then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
+        else ()
+
+  return uiutil:buildRuleResult("2042", "6W", $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
+};
+
+
 declare function xmlconv:rule_2300($doc as element(), $tran as xs:string)
 as element(div) {
 
@@ -247,6 +265,7 @@ as element(div)
             return xmlconv:rule_2017($doc, $tran)
 
     let $r2040 := xmlconv:rule_2040($doc)
+    let $r2042 := xmlconv:rule_2042($doc)
 
     let $r2300 :=
         for $tran in ('11P', '11H04')
@@ -327,6 +346,7 @@ as element(div)
         {$r2016}
         {$r2017}
         {$r2040}
+        {$r2042}
         {$r2300}
         {$r2301}
         {$r2302}
