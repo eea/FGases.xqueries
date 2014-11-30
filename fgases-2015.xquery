@@ -201,6 +201,19 @@ as element(div) {
 };
 
 
+declare function xmlconv:rule_2043($doc as element())
+as element(div) {
+
+  let $err_text := "The totals calculated in 6X must not be negative.
+    Please check amounts reported for production, imports, exports,
+    and stocks (sections 1 to 4)."
+
+  let $err_flag := $doc/F3A_S6A_IA_HFCs/Gas/tr_06X/Amount < 0
+
+  return uiutil:buildRuleResult("2043", "6X", $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
+};
+
+
 declare function xmlconv:rule_2300($doc as element(), $tran as xs:string)
 as element(div) {
 
@@ -266,6 +279,7 @@ as element(div)
 
     let $r2040 := xmlconv:rule_2040($doc)
     let $r2042 := xmlconv:rule_2042($doc)
+    let $r2043 := xmlconv:rule_2043($doc)
 
     let $r2300 :=
         for $tran in ('11P', '11H04')
@@ -347,6 +361,7 @@ as element(div)
         {$r2017}
         {$r2040}
         {$r2042}
+        {$r2043}
         {$r2300}
         {$r2301}
         {$r2302}
