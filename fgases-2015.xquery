@@ -290,7 +290,40 @@ as element(div) {
   let $err_flag :=
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
-        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)][number(Amount)][Amount > $range_min][Amount < $range_max])
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/
+              *[name()=concat('tr_', $tran)]
+              [number(Amount) > $range_min]
+              [number(Amount) < $range_max])
+          then fn:false()
+          else fn:true()
+      else fn:false()
+
+  let $err_status :=
+    if ($doc/F7_s11EquImportTable/Comment/*[name()=concat('tr_', $tran)] = '')
+      then $xmlconv:BLOCKER
+      else $xmlconv:WARNING
+
+  return uiutil:buildRuleResult(
+    $rule, $tran, $err_text, $err_status, $err_flag, (), "")
+};
+
+
+declare function xmlconv:rule_2321($doc as element(),
+                                   $tran as xs:string,
+                                   $range_max as xs:decimal,
+                                   $range_unit as xs:string,
+                                   $rule as xs:string)
+as element(div) {
+
+  let $err_text := concat("The calculated specific charge of F-gases is not in the expected range
+    (up to ", $range_max, " ", $range_unit, "). Please make sure you correctly reported the amounts of gases in
+    units of tonnes, not in kilograms. Please revise your data or provide an explanation to the
+    calculated specific charge.")
+
+  let $err_flag :=
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
+      then
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/tr_11F09[number(Amount) < $range_max])
           then fn:false()
           else fn:true()
       else fn:false()
@@ -398,6 +431,9 @@ as element(div)
         for $tran in ('11F08')
             return xmlconv:rule_2301_2320($doc, $tran, 2.0, 10.0, "2320")
 
+    let $r2321 := xmlconv:rule_2321($doc, "11F09", 5000.0, "kg/piece", "2321")
+
+
   return
     <div class="errors">
         <h4>Error details</h4>
@@ -426,6 +462,7 @@ as element(div)
         {$r2318}
         {$r2319}
         {$r2320}
+        {$r2321}
     </div>
 
 };
