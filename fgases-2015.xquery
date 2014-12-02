@@ -323,7 +323,7 @@ as element(div) {
   let $err_flag :=
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
-        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/tr_11F09[number(Amount) < $range_max])
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount[number() < $range_max])
           then fn:false()
           else fn:true()
       else fn:false()
@@ -432,7 +432,10 @@ as element(div)
             return xmlconv:rule_2301_2320($doc, $tran, 2.0, 10.0, "2320")
 
     let $r2321 := xmlconv:rule_2321($doc, "11F09", 5000.0, "kg/piece", "2321")
-
+    let $r2322 := xmlconv:rule_2321($doc, "11H01", 1040.0, "kg/cubic metre", "2322")
+    let $r2323 := xmlconv:rule_2321($doc, "11H02", 100.0, "kg/cubic metre", "2323")
+    let $r2324 := xmlconv:rule_2321($doc, "11H03", 0.5, "kg per container", "2324")
+    let $r2331 := xmlconv:rule_2321($doc, "11L", 500.0, "kg/piece", "2331")
 
   return
     <div class="errors">
@@ -463,6 +466,10 @@ as element(div)
         {$r2319}
         {$r2320}
         {$r2321}
+        {$r2322}
+        {$r2323}
+        {$r2324}
+        {$r2331}
     </div>
 
 };
