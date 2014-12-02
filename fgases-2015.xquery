@@ -279,11 +279,12 @@ declare function xmlconv:rule_2301_2320($doc as element(),
                                         $tran as xs:string,
                                         $range_min as xs:decimal,
                                         $range_max as xs:decimal,
+                                        $range_unit as xs:string,
                                         $rule as xs:string)
 as element(div) {
 
-  let $err_text := concat("The calculated specific charge of F-gases d is not in the expected range
-    (", $range_min," and ", $range_max, " kg/piece). Please make sure you correctly reported the amounts of gases in
+  let $err_text := concat("The calculated specific charge of F-gases is not in the expected range
+    (", $range_min," and ", $range_max, " ", $range_unit, "). Please make sure you correctly reported the amounts of gases in
     units of tonnes, not in kilograms. Please revise your data or provide an explanation to the
     calculated specific charge.")
 
@@ -362,80 +363,56 @@ as element(div)
         for $tran in ('11P', '11H04')
             return xmlconv:rule_2300($doc, $tran)
 
-    let $r2301 :=
-        for $tran in ('11A01')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 1000.0, "2031")
+    let $r2301 := xmlconv:rule_2301_2320($doc, "11A01", 0.2, 1000.0, "kg/piece", "2301")
 
     let $r2302 :=
         for $tran in ('11A07', '11A08', '11A09', '11A10', '11A11', '11A12')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 300.0, "2032")
+            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 300.0, "kg/piece", "2302")
 
     let $r2303 :=
         for $tran in ('11B01', '11B02', '11B03', '11B04', '11B05', '11B06',
                       '11B07', '11B08', '11B09', '11B10', '11B11', '11B14')
-            return xmlconv:rule_2301_2320($doc, $tran, 1.0, 1000.0, "2033")
+            return xmlconv:rule_2301_2320($doc, $tran, 1.0, 1000.0, "kg/piece", "2303")
 
-    let $r2304 :=
-        for $tran in ('11B12')
-            return xmlconv:rule_2301_2320($doc, $tran, 1.0, 800.0, "2034")
+    let $r2304 := xmlconv:rule_2301_2320($doc, "11B12", 1.0, 800.0, "kg/piece", "2304")
+    let $r2305 := xmlconv:rule_2301_2320($doc, "11B13", 1.0, 400.0, "kg/piece", "2305")
 
-    let $r2305 :=
-        for $tran in ('11B13')
-            return xmlconv:rule_2301_2320($doc, $tran, 1.0, 400.0, "2035")
-
-    let $r2306 :=
-        for $tran in ('11C')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.15, 0.5, "2036")
+    let $r2306 := xmlconv:rule_2301_2320($doc, "11C", 0.15, 0.5, "kg/piece", "2306")
 
     let $r2307 :=
         for $tran in ('11D01', '11D03')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 1000.0, "2037")
+            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 1000.0, "kg/piece", "2307")
 
-    let $r2308 :=
-        for $tran in ('11D02')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 300.0, "2038")
+    let $r2308 := xmlconv:rule_2301_2320($doc, "11D02", 0.2, 300.0, "kg/piece", "2308")
+
+    let $r2310 := xmlconv:rule_2301_2320($doc, "11E01", 0.7, 1.3, "kg/piece", "2310")
+    let $r2311 := xmlconv:rule_2301_2320($doc, "11E02", 0.8, 1.6, "kg/piece", "2311")
 
     let $r2312 :=
         for $tran in ('11E03', '11E04')
-            return xmlconv:rule_2301_2320($doc, $tran, 10.0, 5000.0, "2312")
+            return xmlconv:rule_2301_2320($doc, $tran, 10.0, 5000.0, "kg/piece", "2312")
 
-    let $r2313 :=
-        for $tran in ('11F01')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.3, 1.5, "2313")
-
-    let $r2314 :=
-        for $tran in ('11F02')
-            return xmlconv:rule_2301_2320($doc, $tran, 7.0, 20.0, "2314")
-
-    let $r2315 :=
-        for $tran in ('11F03')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.5, 1.5, "2315")
-
-    let $r2316 :=
-        for $tran in ('11F04')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.7, 1.5, "2316")
-
-    let $r2317 :=
-        for $tran in ('11F05')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.7, 2.5, "2317")
-
-    let $r2318 :=
-        for $tran in ('11F06')
-            return xmlconv:rule_2301_2320($doc, $tran, 5.0, 35.0, "2318")
-
-    let $r2319 :=
-        for $tran in ('11F07')
-            return xmlconv:rule_2301_2320($doc, $tran, 100.0, 1000.0, "2319")
-
-    let $r2320 :=
-        for $tran in ('11F08')
-            return xmlconv:rule_2301_2320($doc, $tran, 2.0, 10.0, "2320")
-
+    let $r2313 := xmlconv:rule_2301_2320($doc, "11F01", 0.3, 1.5, "kg/piece", "2313")
+    let $r2314 := xmlconv:rule_2301_2320($doc, "11F02", 7.0, 20.0, "kg/piece", "2314")
+    let $r2315 := xmlconv:rule_2301_2320($doc, "11F03", 0.5, 1.5, "kg/piece", "2315")
+    let $r2316 := xmlconv:rule_2301_2320($doc, "11F04", 0.7, 1.5, "kg/piece", "2316")
+    let $r2317 := xmlconv:rule_2301_2320($doc, "11F05", 0.7, 2.5, "kg/piece", "2317")
+    let $r2318 := xmlconv:rule_2301_2320($doc, "11F06", 5.0, 35.0, "kg/piece", "2318")
+    let $r2319 := xmlconv:rule_2301_2320($doc, "11F07", 100.0, 1000.0, "kg/piece", "2319")
+    let $r2320 := xmlconv:rule_2301_2320($doc, "11F08", 2.0, 10.0, "kg/piece", "2320")
     let $r2321 := xmlconv:rule_2321($doc, "11F09", 5000.0, "kg/piece", "2321")
     let $r2322 := xmlconv:rule_2321($doc, "11H01", 1040.0, "kg/cubic metre", "2322")
     let $r2323 := xmlconv:rule_2321($doc, "11H02", 100.0, "kg/cubic metre", "2323")
     let $r2324 := xmlconv:rule_2321($doc, "11H03", 0.5, "kg per container", "2324")
+
+    let $r2327 := xmlconv:rule_2301_2320($doc, "11I", 3.0, 500.0, "kg/piece", "2327")
+    let $r2328 := xmlconv:rule_2301_2320($doc, "11J", 0.007, 0.020, "kg/piece", "2328")
+    let $r2329 := xmlconv:rule_2301_2320($doc, "11K", 0.05, 0.5, "kg/piece", "2329")
+    let $r2330 := xmlconv:rule_2301_2320($doc, "11M", 1.0, 500.0, "kg/piece", "2330")
     let $r2331 := xmlconv:rule_2321($doc, "11L", 500.0, "kg/piece", "2331")
+    let $r2332 := xmlconv:rule_2301_2320($doc, "11N", 1.0, 500.0, "kg/piece", "2332")
+    let $r2333 := xmlconv:rule_2301_2320($doc, "11O", 0.2, 1000.0, "kg/piece", "2333")
+
 
   return
     <div class="errors">
@@ -456,6 +433,8 @@ as element(div)
         {$r2306}
         {$r2307}
         {$r2308}
+        {$r2310}
+        {$r2311}
         {$r2312}
         {$r2313}
         {$r2314}
@@ -469,7 +448,13 @@ as element(div)
         {$r2322}
         {$r2323}
         {$r2324}
+        {$r2327}
+        {$r2328}
+        {$r2329}
+        {$r2330}
         {$r2331}
+        {$r2332}
+        {$r2333}
     </div>
 
 };

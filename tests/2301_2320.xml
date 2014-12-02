@@ -10,6 +10,8 @@
 			<tr_11C>true</tr_11C>
 			<tr_11D01>true</tr_11D01>
 			<tr_11D02>true</tr_11D02>
+			<tr_11E01>true</tr_11E01>
+			<tr_11E02>true</tr_11E02>
 			<tr_11E03>true</tr_11E03>
 			<tr_11F01>true</tr_11F01>
 			<tr_11F02>true</tr_11F02>
@@ -21,23 +23,25 @@
 			<tr_11F08>true</tr_11F08>
 		</UISelectedTransactions>
 		<Comment>
-			<tr_11A07>true</tr_11A07>
-			<tr_11B01>true</tr_11B01>
-			<tr_11B12>true</tr_11B12>
-			<tr_11B13>true</tr_11B13>
-			<tr_11C>true</tr_11C>
+			<tr_11A07>comment</tr_11A07>
+			<tr_11B01>comment</tr_11B01>
+			<tr_11B12>comment</tr_11B12>
+			<tr_11B13>comment</tr_11B13>
+			<tr_11C>comment</tr_11C>
 			<tr_11F08>comment</tr_11F08>
-			<tr_11D01>true</tr_11D01>
-			<tr_11D02>true</tr_11D02>
-			<tr_11E03>true</tr_11E03>
-			<tr_11F01>true</tr_11F01>
-			<tr_11F02>true</tr_11F02>
-			<tr_11F03>true</tr_11F03>
-			<tr_11F04>true</tr_11F04>
-			<tr_11F05>true</tr_11F05>
-			<tr_11F06>true</tr_11F06>
-			<tr_11F07>true</tr_11F07>
-			<tr_11F08>true</tr_11F08>
+			<tr_11D01>comment</tr_11D01>
+			<tr_11D02>comment</tr_11D02>
+			<tr_11E01>comment</tr_11E01>
+			<tr_11E02>comment</tr_11E02>
+			<tr_11E03>comment</tr_11E03>
+			<tr_11F01>comment</tr_11F01>
+			<tr_11F02>comment</tr_11F02>
+			<tr_11F03>comment</tr_11F03>
+			<tr_11F04>comment</tr_11F04>
+			<tr_11F05>comment</tr_11F05>
+			<tr_11F06>comment</tr_11F06>
+			<tr_11F07>comment</tr_11F07>
+			<tr_11F08>comment</tr_11F08>
 		</Comment>
 		<AmountOfImportedEquipment>
 			<tr_11B13>
@@ -72,6 +76,14 @@
 				<Code></Code>
 				<Amount>0.1</Amount>
 			</tr_11D02>
+			<tr_11E01>
+				<Code></Code>
+				<Amount>0.1</Amount>
+			</tr_11E01>
+			<tr_11E02>
+				<Code></Code>
+				<Amount>0.1</Amount>
+			</tr_11E02>
 			<tr_11E03>
 				<Code></Code>
 				<Amount>0.1</Amount>
