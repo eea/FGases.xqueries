@@ -232,6 +232,27 @@ as element(div) {
 };
 
 
+declare function xmlconv:rule_2050($doc as element(), $tran as xs:string)
+as element(div) {
+
+  let $err_text := "Please specify a measurement unit for the
+    amount of products/equipment imported."
+
+  let $err_flag :=
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
+      then
+        if ($doc/F7_s11EquImportTable/Gas/*[name()=concat('tr_', $tran)][number(Amount) > 0])
+          then
+            if ($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran, '_Unit')] = '')
+              then fn:true()
+              else fn:false()
+          else fn:false()
+      else fn:false()
+
+  return uiutil:buildRuleResult("2050", $tran, $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
+};
+
+
 declare function xmlconv:rule_2300($doc as element(), $tran as xs:string)
 as element(div) {
 
@@ -299,6 +320,10 @@ as element(div)
     let $r2041 := xmlconv:rule_2041($doc)
     let $r2042 := xmlconv:rule_2042($doc)
     let $r2043 := xmlconv:rule_2043($doc)
+
+    let $r2050 :=
+      for $tran in ('11P', '11H04')
+        return xmlconv:rule_2050($doc, $tran)
 
     let $r2300 :=
         for $tran in ('11P', '11H04')
@@ -382,6 +407,7 @@ as element(div)
         {$r2041}
         {$r2042}
         {$r2043}
+        {$r2050}
         {$r2300}
         {$r2301}
         {$r2302}
