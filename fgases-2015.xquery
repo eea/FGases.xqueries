@@ -20,6 +20,7 @@ declare namespace xmlconv="http://converters.eionet.europa.eu/fgases";
 (: namespace for BDR localisations :)
 declare namespace i18n = "http://namespaces.zope.org/i18n";
 (: Common utility methods :)
+
 import module namespace cutil = "http://converters.eionet.europa.eu/fgases/cutil" at "fgases-common-util-2015.xquery";
 (: UI utility methods for build HTML formatted QA result:)
 import module namespace uiutil = "http://converters.eionet.europa.eu/fgases/ui" at "fgases-ui-util-2015.xquery";
@@ -253,6 +254,34 @@ as element(div) {
 };
 
 
+declare function xmlconv:rule_2091($doc as element())
+as element(div) {
+
+  let $err_text := "The amount reported for exempted supply for export in 5C_exempted must
+    not exceed the amount reported for the intended application 'export' in 6A.
+    Please revise your data."
+
+  let $gases :=
+    for $gas in $doc/GeneralReportData/HFCs/GasName
+    for $mixture in $doc/GeneralReportData/CommonlyUsedMixtures/GasName
+    return $gas | $mixture
+
+  let $err_flag :=
+    for $gas in $gases
+
+    let $node_exempted := $doc/F2_S5_exempted_HFCs/Gas[GasCode=$gas]/tr_05C/SumOfPartnerAmounts
+    let $node_gas := $doc/F3A_S6A_IA_HFCs/Gas[GasCode=$gas]/tr_06A/Amount
+
+    return
+      if (fn:number($node_gas) ge fn:number($node_exempted))
+        then ()
+        else data($doc/ReportedGases[GasId eq $gas]/Name)
+
+  return uiutil:buildRuleResult("2091", "6A", $err_text, $xmlconv:BLOCKER,
+         count($err_flag)>0, $err_flag, "Invalid gases are: ")
+};
+
+
 declare function xmlconv:rule_2300($doc as element(), $tran as xs:string)
 as element(div) {
 
@@ -359,6 +388,8 @@ as element(div)
       for $tran in ('11P', '11H04')
         return xmlconv:rule_2050($doc, $tran)
 
+    let $r2091 := xmlconv:rule_2091($doc)
+
     let $r2300 :=
         for $tran in ('11P', '11H04')
             return xmlconv:rule_2300($doc, $tran)
@@ -424,6 +455,7 @@ as element(div)
         {$r2042}
         {$r2043}
         {$r2050}
+        {$r2091}
         {$r2300}
         {$r2301}
         {$r2302}
