@@ -428,6 +428,33 @@ as element(div) {
 };
 
 
+declare function xmlconv:rule_13($doc as element(), $tran as xs:string)
+as element(div) {
+
+  (: apply to rule 2065 :)
+
+  let $err_text := "You reported on  the amount of contained gases in imported products/equipment.
+      Please report on the amount of imported products/equipment, as well"
+
+  let $gases :=
+    for $gas in $doc/F7_s11EquImportTable/Gas
+    where $gas/*[name()=concat('tr_', $tran)][number(Amount) > 0]
+    return $gas/GasCode
+
+  let $err_flag :=
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true'
+        and fn:count($gases) > 0)
+      then
+        if (cutil:isEmpty($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount))
+        then fn:true()
+        else fn:false()
+      else fn:false()
+
+  return uiutil:buildRuleResult(
+    "2065", $tran, $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
+};
+
+
 declare function xmlconv:validateReport($url as xs:string)
 as element(div)
 {
@@ -458,6 +485,17 @@ as element(div)
                       '11F07', '11F08', '11F09', '11H01', '11H02', '11H03', '11H04',
                       '11I', '11J', '11K', '11L', '11M', '11N', '11O', '11P')
             return xmlconv:rule_8($doc, $tran)
+
+    let $r2065 :=
+        for $tran in ('11A01', '11A02', '11A03', '11A04', '11A05', '11A06', '11A07',
+                      '11A08', '11A09', '11A10', '11A11', '11A12', '11A13', '11A14',
+                      '11B01', '11B02', '11B03', '11B04', '11B05', '11B06', '11B07',
+                      '11B08', '11B09', '11B10', '11B11', '11B12', '11B13', '11B14',
+                      '11C', '11D01', '11D02', '11D03', '11E01', '11E02', '11E03',
+                      '11E04', '11F01', '11F02', '11F03', '11F04', '11F05', '11F06',
+                      '11F07', '11F08', '11F09', '11H01', '11H02', '11H03', '11H04',
+                      '11I', '11J', '11K', '11L', '11M', '11N', '11O', '11P')
+            return xmlconv:rule_13($doc, $tran)
 
     let $r2091 := xmlconv:rule_9($doc, "6A", "5C", "2091")
     let $r2092 := xmlconv:rule_9($doc, "6B", "5A", "2092")
@@ -532,6 +570,7 @@ as element(div)
         {$r2043}
         {$r2050}
         {$r2051}
+        {$r2065}
         {$r2091}
         {$r2092}
         {$r2093}
