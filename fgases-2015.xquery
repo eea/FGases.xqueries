@@ -254,7 +254,8 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2091($doc as element())
+declare function xmlconv:rule_2091($doc as element(), $tran as xs:string,
+                                   $exempt_tran as xs:string, $rule as xs:string)
 as element(div) {
 
   let $err_text := "The amount reported for exempted supply for export in 5C_exempted must
@@ -269,15 +270,18 @@ as element(div) {
   let $err_flag :=
     for $gas in $gases
 
-    let $node_exempted := $doc/F2_S5_exempted_HFCs/Gas[GasCode=$gas]/tr_05C/SumOfPartnerAmounts
-    let $node_gas := $doc/F3A_S6A_IA_HFCs/Gas[GasCode=$gas]/tr_06A/Amount
+    let $node_exempted := $doc/F2_S5_exempted_HFCs/Gas[GasCode=$gas]/*[name()=concat('tr_0', $exempt_tran)]/SumOfPartnerAmounts
+    let $node_gas := $doc/F3A_S6A_IA_HFCs/Gas[GasCode=$gas]/*[name()=concat('tr_0', $tran)]/Amount
 
     return
-      if (fn:number($node_gas) ge fn:number($node_exempted))
-        then ()
-        else data($doc/ReportedGases[GasId eq $gas]/Name)
+      if ($node_exempted != '' and $node_gas != '')
+        then
+          if (fn:number($node_gas) ge fn:number($node_exempted))
+          then ()
+          else data($doc/ReportedGases[GasId eq $gas]/Name)
+        else ()
 
-  return uiutil:buildRuleResult("2091", "6A", $err_text, $xmlconv:BLOCKER,
+  return uiutil:buildRuleResult($rule, $tran, $err_text, $xmlconv:BLOCKER,
          count($err_flag)>0, $err_flag, "Invalid gases are: ")
 };
 
@@ -388,7 +392,12 @@ as element(div)
       for $tran in ('11P', '11H04')
         return xmlconv:rule_2050($doc, $tran)
 
-    let $r2091 := xmlconv:rule_2091($doc)
+    let $r2091 := xmlconv:rule_2091($doc, "6A", "5C", "2091")
+    let $r2092 := xmlconv:rule_2091($doc, "6B", "5A", "2092")
+    let $r2093 := xmlconv:rule_2091($doc, "6C", "5D", "2093")
+    let $r2094 := xmlconv:rule_2091($doc, "6I", "5F", "2094")
+    let $r2095 := xmlconv:rule_2091($doc, "6L", "5B", "2095")
+    let $r2096 := xmlconv:rule_2091($doc, "6M", "5E", "2096")
 
     let $r2300 :=
         for $tran in ('11P', '11H04')
@@ -456,6 +465,11 @@ as element(div)
         {$r2043}
         {$r2050}
         {$r2091}
+        {$r2092}
+        {$r2093}
+        {$r2094}
+        {$r2095}
+        {$r2096}
         {$r2300}
         {$r2301}
         {$r2302}
