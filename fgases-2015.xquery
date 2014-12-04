@@ -136,8 +136,10 @@ declare variable $source_url := "http://cdrtest.eionet.europa.eu/de/colt_cs2a/co
  : ======================================================================
  :)
 
-declare function xmlconv:rule_2016($doc as element())
+declare function xmlconv:rule_1($doc as element())
 as element(div) {
+
+  (: apply to rule 2016 :)
 
   let $err_text := "You reported on own destruction in section 1B.
     Please accordingly select to be a destruction company in the activity selection and report subsequently in section 8."
@@ -150,8 +152,10 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2017($doc as element(), $tran as xs:string)
+declare function xmlconv:rule_2($doc as element(), $tran as xs:string)
 as element(div) {
+
+  (: apply to rule 2017 :)
 
   let $err_text := "A negative amount here is implausible, please revise your data."
 
@@ -165,8 +169,10 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2040($doc as element())
+declare function xmlconv:rule_3($doc as element())
 as element(div) {
+
+  (: apply to rule 2040 :)
 
   let $err_text := "Please explain the 'other' intended apllication
     / why the application its unknown."
@@ -184,8 +190,10 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2041($doc as element())
+declare function xmlconv:rule_4($doc as element())
 as element(div) {
+
+  (: apply to rule 2041 :)
 
   let $err_text := "Please provide an explanation for accountancy adjustments"
 
@@ -202,8 +210,10 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2042($doc as element())
+declare function xmlconv:rule_5($doc as element())
 as element(div) {
+
+  (: apply to rule 2042 :)
 
   let $err_text := "The totals reported for intended applications (6W)
     should match the totals reported as placed on the Union market (6X).
@@ -220,8 +230,10 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2043($doc as element())
+declare function xmlconv:rule_6($doc as element())
 as element(div) {
+
+  (: apply to rule 2043 :)
 
   let $err_text := "The totals calculated in 6X must not be negative.
     Please check amounts reported for production, imports, exports,
@@ -233,8 +245,10 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2050($doc as element(), $tran as xs:string)
+declare function xmlconv:rule_7($doc as element(), $tran as xs:string)
 as element(div) {
+
+  (: apply to rule 2050 :)
 
   let $err_text := "Please specify a measurement unit for the
     amount of products/equipment imported."
@@ -254,9 +268,35 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2091($doc as element(), $tran as xs:string,
+declare function xmlconv:rule_8($doc as element(), $tran as xs:string)
+as element(div) {
+
+  (: apply to rule 2051 :)
+
+  let $err_text := "You reported on the amount of imported products/equipment.
+    Please report on the amount of contained gases , as well
+    (unit: metric tonnes of gases)."
+
+  let $gases :=
+    for $gas in $doc/F7_s11EquImportTable/Gas
+    where fn:not(cutil:isEmpty($gas/*[name()=concat('tr_', $tran)]/Amount))
+    return $gas/GasCode
+
+  let $err_flag :=
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/tr_11A01 = 'true'
+          and fn:count($gases) = 0)
+      then fn:true()
+      else fn:false()
+
+ return uiutil:buildRuleResult("2051", $tran, $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
+};
+
+
+declare function xmlconv:rule_9($doc as element(), $tran as xs:string,
                                    $exempt_tran as xs:string, $rule as xs:string)
 as element(div) {
+
+  (: apply to rules 2091, 2092, 2093, 2094, 2095, 2096 :)
 
   let $err_text := "The amount reported for exempted supply for export in 5C_exempted must
     not exceed the amount reported for the intended application 'export' in 6A.
@@ -286,8 +326,10 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2300($doc as element(), $tran as xs:string)
+declare function xmlconv:rule_10($doc as element(), $tran as xs:string)
 as element(div) {
+
+  (: apply to rule 2300 :)
 
   let $err_text := "The calculated specific charge of F-gases exceeds 1000kg/tonne;
     therefore a value or unit must be incorrect. Please revise reported data or units."
@@ -308,13 +350,18 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2301_2320($doc as element(),
+declare function xmlconv:rule_11($doc as element(),
                                         $tran as xs:string,
                                         $range_min as xs:decimal,
                                         $range_max as xs:decimal,
                                         $range_unit as xs:string,
                                         $rule as xs:string)
 as element(div) {
+
+  (: apply to rules 2301, 2302, 2303, 2304, 2305, 2306, 2307, 2308, 2310, 2311,
+                    2312, 2313, 2314, 2315, 2316, 2317, 2318, 2319, 2320, 2321,
+                    2322, 2323, 2324, 2327, 2328, 2329, 2330, 2331, 2332, 2333,
+                    2327, 2328, 2329, 2330, 2332, 2333 :)
 
   let $err_text := concat("The calculated specific charge of F-gases is not in the expected range
     (", $range_min," and ", $range_max, " ", $range_unit, "). Please make sure you correctly reported the amounts of gases in
@@ -324,12 +371,15 @@ as element(div) {
   let $err_flag :=
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
-        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/
-              *[name()=concat('tr_', $tran)]
-              [number(Amount) > $range_min]
-              [number(Amount) < $range_max])
-          then fn:false()
-          else fn:true()
+        if ($doc/F7_s11EquImportTable[AmountOfImportedEquipment != ''])
+          then
+            if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/
+                *[name()=concat('tr_', $tran)]
+                [number(Amount) > $range_min]
+                [number(Amount) < $range_max])
+              then fn:false()
+              else fn:true()
+          else fn:false()
       else fn:false()
 
   let $err_status :=
@@ -342,12 +392,14 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2321($doc as element(),
+declare function xmlconv:rule_12($doc as element(),
                                    $tran as xs:string,
                                    $range_max as xs:decimal,
                                    $range_unit as xs:string,
                                    $rule as xs:string)
 as element(div) {
+
+  (: apply to rules 2321, 2322, 2323, 2324, 2331 :)
 
   let $err_text := concat("The calculated specific charge of F-gases is not in the expected range
     (up to ", $range_max, " ", $range_unit, "). Please make sure you correctly reported the amounts of gases in
@@ -357,9 +409,13 @@ as element(div) {
   let $err_flag :=
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
-        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount[number() < $range_max])
-          then fn:false()
-          else fn:true()
+        if ($doc/F7_s11EquImportTable[AmountOfImportedEquipment != ''])
+          then
+            if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()
+                =concat('tr_', $tran)]/Amount[number() < $range_max])
+              then fn:false()
+              else fn:true()
+          else fn:false()
       else fn:false()
 
   let $err_status :=
@@ -377,81 +433,92 @@ as element(div)
 {
     let $doc := fn:doc($url)/FGasesReporting
 
-    let $r2016 := xmlconv:rule_2016($doc)
+    let $r2016 := xmlconv:rule_1($doc)
 
     let $r2017 :=
         for $tran in ('1E', '3C', '4D', '4E', '4I', '4J')
-            return xmlconv:rule_2017($doc, $tran)
+            return xmlconv:rule_2($doc, $tran)
 
-    let $r2040 := xmlconv:rule_2040($doc)
-    let $r2041 := xmlconv:rule_2041($doc)
-    let $r2042 := xmlconv:rule_2042($doc)
-    let $r2043 := xmlconv:rule_2043($doc)
+    let $r2040 := xmlconv:rule_3($doc)
+    let $r2041 := xmlconv:rule_4($doc)
+    let $r2042 := xmlconv:rule_5($doc)
+    let $r2043 := xmlconv:rule_6($doc)
 
     let $r2050 :=
       for $tran in ('11P', '11H04')
-        return xmlconv:rule_2050($doc, $tran)
+        return xmlconv:rule_7($doc, $tran)
 
-    let $r2091 := xmlconv:rule_2091($doc, "6A", "5C", "2091")
-    let $r2092 := xmlconv:rule_2091($doc, "6B", "5A", "2092")
-    let $r2093 := xmlconv:rule_2091($doc, "6C", "5D", "2093")
-    let $r2094 := xmlconv:rule_2091($doc, "6I", "5F", "2094")
-    let $r2095 := xmlconv:rule_2091($doc, "6L", "5B", "2095")
-    let $r2096 := xmlconv:rule_2091($doc, "6M", "5E", "2096")
+    let $r2051 :=
+        for $tran in ('11A01', '11A02', '11A03', '11A04', '11A05', '11A06', '11A07',
+                      '11A08', '11A09', '11A10', '11A11', '11A12', '11A13', '11A14',
+                      '11B01', '11B02', '11B03', '11B04', '11B05', '11B06', '11B07',
+                      '11B08', '11B09', '11B10', '11B11', '11B12', '11B13', '11B14',
+                      '11C', '11D01', '11D02', '11D03', '11E01', '11E02', '11E03',
+                      '11E04', '11F01', '11F02', '11F03', '11F04', '11F05', '11F06',
+                      '11F07', '11F08', '11F09', '11H01', '11H02', '11H03', '11H04',
+                      '11I', '11J', '11K', '11L', '11M', '11N', '11O', '11P')
+            return xmlconv:rule_8($doc, $tran)
+
+    let $r2091 := xmlconv:rule_9($doc, "6A", "5C", "2091")
+    let $r2092 := xmlconv:rule_9($doc, "6B", "5A", "2092")
+    let $r2093 := xmlconv:rule_9($doc, "6C", "5D", "2093")
+    let $r2094 := xmlconv:rule_9($doc, "6I", "5F", "2094")
+    let $r2095 := xmlconv:rule_9($doc, "6L", "5B", "2095")
+    let $r2096 := xmlconv:rule_9($doc, "6M", "5E", "2096")
 
     let $r2300 :=
         for $tran in ('11P', '11H04')
-            return xmlconv:rule_2300($doc, $tran)
+            return xmlconv:rule_10($doc, $tran)
 
-    let $r2301 := xmlconv:rule_2301_2320($doc, "11A01", 0.2, 1000.0, "kg/piece", "2301")
+    let $r2301 := xmlconv:rule_11($doc, "11A01", 0.2, 1000.0, "kg/piece", "2301")
 
     let $r2302 :=
         for $tran in ('11A07', '11A08', '11A09', '11A10', '11A11', '11A12')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 300.0, "kg/piece", "2302")
+            return xmlconv:rule_11($doc, $tran, 0.2, 300.0, "kg/piece", "2302")
 
     let $r2303 :=
         for $tran in ('11B01', '11B02', '11B03', '11B04', '11B05', '11B06',
                       '11B07', '11B08', '11B09', '11B10', '11B11', '11B14')
-            return xmlconv:rule_2301_2320($doc, $tran, 1.0, 1000.0, "kg/piece", "2303")
+            return xmlconv:rule_11($doc, $tran, 1.0, 1000.0, "kg/piece", "2303")
 
-    let $r2304 := xmlconv:rule_2301_2320($doc, "11B12", 1.0, 800.0, "kg/piece", "2304")
-    let $r2305 := xmlconv:rule_2301_2320($doc, "11B13", 1.0, 400.0, "kg/piece", "2305")
+    let $r2304 := xmlconv:rule_11($doc, "11B12", 1.0, 800.0, "kg/piece", "2304")
+    let $r2305 := xmlconv:rule_11($doc, "11B13", 1.0, 400.0, "kg/piece", "2305")
 
-    let $r2306 := xmlconv:rule_2301_2320($doc, "11C", 0.15, 0.5, "kg/piece", "2306")
+    let $r2306 := xmlconv:rule_11($doc, "11C", 0.15, 0.5, "kg/piece", "2306")
 
     let $r2307 :=
         for $tran in ('11D01', '11D03')
-            return xmlconv:rule_2301_2320($doc, $tran, 0.2, 1000.0, "kg/piece", "2307")
+            return xmlconv:rule_11($doc, $tran, 0.2, 1000.0, "kg/piece", "2307")
 
-    let $r2308 := xmlconv:rule_2301_2320($doc, "11D02", 0.2, 300.0, "kg/piece", "2308")
+    let $r2308 := xmlconv:rule_11($doc, "11D02", 0.2, 300.0, "kg/piece", "2308")
 
-    let $r2310 := xmlconv:rule_2301_2320($doc, "11E01", 0.7, 1.3, "kg/piece", "2310")
-    let $r2311 := xmlconv:rule_2301_2320($doc, "11E02", 0.8, 1.6, "kg/piece", "2311")
+    let $r2310 := xmlconv:rule_11($doc, "11E01", 0.7, 1.3, "kg/piece", "2310")
+    let $r2311 := xmlconv:rule_11($doc, "11E02", 0.8, 1.6, "kg/piece", "2311")
 
     let $r2312 :=
         for $tran in ('11E03', '11E04')
-            return xmlconv:rule_2301_2320($doc, $tran, 10.0, 5000.0, "kg/piece", "2312")
+            return xmlconv:rule_11($doc, $tran, 10.0, 5000.0, "kg/piece", "2312")
 
-    let $r2313 := xmlconv:rule_2301_2320($doc, "11F01", 0.3, 1.5, "kg/piece", "2313")
-    let $r2314 := xmlconv:rule_2301_2320($doc, "11F02", 7.0, 20.0, "kg/piece", "2314")
-    let $r2315 := xmlconv:rule_2301_2320($doc, "11F03", 0.5, 1.5, "kg/piece", "2315")
-    let $r2316 := xmlconv:rule_2301_2320($doc, "11F04", 0.7, 1.5, "kg/piece", "2316")
-    let $r2317 := xmlconv:rule_2301_2320($doc, "11F05", 0.7, 2.5, "kg/piece", "2317")
-    let $r2318 := xmlconv:rule_2301_2320($doc, "11F06", 5.0, 35.0, "kg/piece", "2318")
-    let $r2319 := xmlconv:rule_2301_2320($doc, "11F07", 100.0, 1000.0, "kg/piece", "2319")
-    let $r2320 := xmlconv:rule_2301_2320($doc, "11F08", 2.0, 10.0, "kg/piece", "2320")
-    let $r2321 := xmlconv:rule_2321($doc, "11F09", 5000.0, "kg/piece", "2321")
-    let $r2322 := xmlconv:rule_2321($doc, "11H01", 1040.0, "kg/cubic metre", "2322")
-    let $r2323 := xmlconv:rule_2321($doc, "11H02", 100.0, "kg/cubic metre", "2323")
-    let $r2324 := xmlconv:rule_2321($doc, "11H03", 0.5, "kg per container", "2324")
+    let $r2313 := xmlconv:rule_11($doc, "11F01", 0.3, 1.5, "kg/piece", "2313")
+    let $r2314 := xmlconv:rule_11($doc, "11F02", 7.0, 20.0, "kg/piece", "2314")
+    let $r2315 := xmlconv:rule_11($doc, "11F03", 0.5, 1.5, "kg/piece", "2315")
+    let $r2316 := xmlconv:rule_11($doc, "11F04", 0.7, 1.5, "kg/piece", "2316")
+    let $r2317 := xmlconv:rule_11($doc, "11F05", 0.7, 2.5, "kg/piece", "2317")
+    let $r2318 := xmlconv:rule_11($doc, "11F06", 5.0, 35.0, "kg/piece", "2318")
+    let $r2319 := xmlconv:rule_11($doc, "11F07", 100.0, 1000.0, "kg/piece", "2319")
+    let $r2320 := xmlconv:rule_11($doc, "11F08", 2.0, 10.0, "kg/piece", "2320")
+    let $r2321 := xmlconv:rule_12($doc, "11F09", 5000.0, "kg/piece", "2321")
+    let $r2322 := xmlconv:rule_12($doc, "11H01", 1040.0, "kg/cubic metre", "2322")
+    let $r2323 := xmlconv:rule_12($doc, "11H02", 100.0, "kg/cubic metre", "2323")
+    let $r2324 := xmlconv:rule_12($doc, "11H03", 0.5, "kg per container", "2324")
 
-    let $r2327 := xmlconv:rule_2301_2320($doc, "11I", 3.0, 500.0, "kg/piece", "2327")
-    let $r2328 := xmlconv:rule_2301_2320($doc, "11J", 0.007, 0.020, "kg/piece", "2328")
-    let $r2329 := xmlconv:rule_2301_2320($doc, "11K", 0.05, 0.5, "kg/piece", "2329")
-    let $r2330 := xmlconv:rule_2301_2320($doc, "11M", 1.0, 500.0, "kg/piece", "2330")
-    let $r2331 := xmlconv:rule_2321($doc, "11L", 500.0, "kg/piece", "2331")
-    let $r2332 := xmlconv:rule_2301_2320($doc, "11N", 1.0, 500.0, "kg/piece", "2332")
-    let $r2333 := xmlconv:rule_2301_2320($doc, "11O", 0.2, 1000.0, "kg/piece", "2333")
+    let $r2327 := xmlconv:rule_11($doc, "11I", 3.0, 500.0, "kg/piece", "2327")
+    let $r2328 := xmlconv:rule_11($doc, "11J", 0.007, 0.020, "kg/piece", "2328")
+    let $r2329 := xmlconv:rule_11($doc, "11K", 0.05, 0.5, "kg/piece", "2329")
+    let $r2330 := xmlconv:rule_11($doc, "11M", 1.0, 500.0, "kg/piece", "2330")
+    let $r2331 := xmlconv:rule_12($doc, "11L", 500.0, "kg/piece", "2331")
+    let $r2332 := xmlconv:rule_11($doc, "11N", 1.0, 500.0, "kg/piece", "2332")
+    let $r2333 := xmlconv:rule_11($doc, "11O", 0.2, 1000.0, "kg/piece", "2333")
 
 
   return
@@ -464,6 +531,7 @@ as element(div)
         {$r2042}
         {$r2043}
         {$r2050}
+        {$r2051}
         {$r2091}
         {$r2092}
         {$r2093}
