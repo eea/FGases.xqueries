@@ -326,7 +326,7 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_10($doc as element(), $tran as xs:string)
+declare function xmlconv:rule_10($doc as element(), $tran as xs:string, $tran_unit as xs:string)
 as element(div) {
 
   (: apply to rule 2300 :)
@@ -337,7 +337,7 @@ as element(div) {
   let $err_flag :=
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
-        if ($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran, '_Unit')] = 'metrictonnes')
+        if ($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran_unit, '_Unit')] = 'metrictonnes')
           then
             if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount > 1000)
               then fn:true()
@@ -528,8 +528,7 @@ as element(div)
     let $r2096 := xmlconv:rule_9($doc, "6M", "5E", "2096")
 
     let $r2300 :=
-        for $tran in ('11P', '11H04')
-            return xmlconv:rule_10($doc, $tran)
+        xmlconv:rule_10($doc, '11P', '11P') | xmlconv:rule_10($doc, '11H04', '11H4')
 
     let $r2301 := xmlconv:rule_11($doc, "11A01", 0.2, 1000.0, "kg/piece", "2301")
 
