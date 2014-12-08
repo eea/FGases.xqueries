@@ -476,6 +476,30 @@ as element(div) {
 };
 
 
+declare function xmlconv:rule_15($doc as element())
+as element(div) {
+
+  (: apply to rule 2078 :)
+
+  let $err_text := "A negative amount here is implausible, please revise your data."
+
+  let $gases :=
+    for $gas in $doc/ReportedGases
+    where $gas/IsBlend = 'true'
+    return $gas/GasId
+
+  let $err_flag :=
+    for $gas in $gases
+    return
+      if ($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas]/tr_01H[number(Amount) >= 0])
+        then ()
+        else data($doc/ReportedGases[GasId eq $gas]/Name)
+
+  return uiutil:buildRuleResult("2078", "1H", $err_text, $xmlconv:BLOCKER,
+         count($err_flag)>0, $err_flag, "Invalid gases are: ")
+};
+
+
 declare function xmlconv:validateReport($url as xs:string)
 as element(div)
 {
@@ -518,6 +542,8 @@ as element(div)
                       '11I', '11J', '11K', '11L', '11M', '11N', '11O', '11P')
             return xmlconv:rule_13($doc, $tran)
 
+
+    let $r2078 := xmlconv:rule_15($doc)
     let $r2079 := xmlconv:rule_14($doc)
 
     let $r2091 := xmlconv:rule_9($doc, "6A", "5C", "2091")
@@ -593,6 +619,7 @@ as element(div)
         {$r2050}
         {$r2051}
         {$r2065}
+        {$r2078}
         {$r2079}
         {$r2091}
         {$r2092}

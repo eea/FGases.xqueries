@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FGasesReporting>
+    <ReportedGases>
+        <GasGroup>HFCs</GasGroup>
+        <GasId>2</GasId>
+        <Code>HFC-23</Code>
+        <Name>HFC-23 (trifluoromethane, fluoroform)</Name>
+        <IsBlend>true</IsBlend>
+    </ReportedGases>
+    <ReportedGases>
+        <GasGroup>HFCs</GasGroup>
+        <GasId>4</GasId>
+        <Code>HFC-41</Code>
+        <Name>HFC-41 (fluoromethane, methyl fluoride)</Name>
+        <IsBlend>false</IsBlend>
+    </ReportedGases>
+    <F1_S1_4_ProdImpExp>
+        <Gas>
+            <GasCode>2</GasCode>
+            <tr_01H>
+                <Code>01H</Code>
+                <Amount>-1</Amount>
+            </tr_01H>
+        </Gas>
+        <Gas>
+            <GasCode>4</GasCode>
+            <tr_01H>
+                <Code>01H</Code>
+                <Amount>-1</Amount>
+            </tr_01H>
+        </Gas>
+    </F1_S1_4_ProdImpExp>
+</FGasesReporting>
