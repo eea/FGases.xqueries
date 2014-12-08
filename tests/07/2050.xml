@@ -39,15 +39,5 @@
                 <Amount>0</Amount>
             </tr_11P>
         </Gas>
-        <AmountOfImportedEquipment>
-            <tr_11H04>
-                <Code></Code>
-                <Amount></Amount>
-            </tr_11H04>
-            <tr_11P>
-                <Code></Code>
-                <Amount></Amount>
-            </tr_11P>
-        </AmountOfImportedEquipment>
     </F7_s11EquImportTable>
 </FGasesReporting>

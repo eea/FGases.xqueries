@@ -145,7 +145,7 @@ as element(div) {
       be a destruction company in the activity selection and report subsequently in section 8."
 
   let $err_flag :=
-    sum($doc/F1_S1_4_ProdImpExp/Gas/tr_01B/Amount) > 1000
+    sum($doc/F1_S1_4_ProdImpExp/Gas/tr_01B[number(Amount) > 1000])
     and $doc/GeneralReportData/Activities/D != 'true'
 
   return uiutil:buildRuleResult("2016", "1B", $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
@@ -245,7 +245,7 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_7($doc as element(), $tran as xs:string)
+declare function xmlconv:rule_7($doc as element(), $tran as xs:string, $tran_unit as xs:string)
 as element(div) {
 
   (: apply to rule 2050 :)
@@ -256,15 +256,17 @@ as element(div) {
   let $err_flag :=
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
-        if ($doc/F7_s11EquImportTable/Gas/*[name()=concat('tr_', $tran)][number(Amount) > 0])
-          then
-            if ($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran, '_Unit')] = '')
-              then fn:true()
-              else fn:false()
-          else fn:false()
-      else fn:false()
+        for $gas in $doc/F7_s11EquImportTable/Gas
+          return
+            if ($gas/*[name()=concat('tr_', $tran)][number(Amount) > 0])
+              then
+                if ($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran_unit, '_Unit')] = '')
+                  then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
+                  else ()
+              else ()
+      else ()
 
-  return uiutil:buildRuleResult("2050", $tran, $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
+  return uiutil:buildRuleResult("2050", $tran, $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "")
 };
 
 
@@ -444,7 +446,7 @@ as element(div) {
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true'
         and fn:count($gases) > 0)
       then
-        if (cutil:isEmpty($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount))
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount = '')
         then fn:true()
         else fn:false()
       else fn:false()
@@ -517,8 +519,7 @@ as element(div)
     let $r2043 := xmlconv:rule_6($doc)
 
     let $r2050 :=
-      for $tran in ('11P', '11H04')
-        return xmlconv:rule_7($doc, $tran)
+        xmlconv:rule_7($doc, '11P', '11P') | xmlconv:rule_7($doc, '11H04', '11H4')
 
     let $r2051 :=
         for $tran in ('11A01', '11A02', '11A03', '11A04', '11A05', '11A06', '11A07',
