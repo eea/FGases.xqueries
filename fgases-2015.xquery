@@ -455,6 +455,28 @@ as element(div) {
 };
 
 
+declare function xmlconv:rule_14($doc as element())
+as element(div) {
+
+  (: apply to rule 2079 :)
+
+  let $err_text := "Please explain the category of imported products/equipment."
+
+  let $err_flag :=
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/tr_11P = 'true')
+      then
+        if ($doc/F7_s11EquImportTable/SumOfAllGasesS1/tr_11P[number(Amount) > 0])
+          then
+            if ($doc/F7_s11EquImportTable/Category/tr_11P != '')
+              then fn:false()
+              else fn:true()
+          else fn:false()
+      else fn:false()
+
+  return uiutil:buildRuleResult("2079", "11P", $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
+};
+
+
 declare function xmlconv:validateReport($url as xs:string)
 as element(div)
 {
@@ -496,6 +518,8 @@ as element(div)
                       '11F07', '11F08', '11F09', '11H01', '11H02', '11H03', '11H04',
                       '11I', '11J', '11K', '11L', '11M', '11N', '11O', '11P')
             return xmlconv:rule_13($doc, $tran)
+
+    let $r2079 := xmlconv:rule_14($doc)
 
     let $r2091 := xmlconv:rule_9($doc, "6A", "5C", "2091")
     let $r2092 := xmlconv:rule_9($doc, "6B", "5A", "2092")
@@ -571,6 +595,7 @@ as element(div)
         {$r2050}
         {$r2051}
         {$r2065}
+        {$r2079}
         {$r2091}
         {$r2092}
         {$r2093}

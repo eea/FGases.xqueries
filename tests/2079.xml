@@ -5,7 +5,7 @@
       <tr_11P>true</tr_11P>
     </UISelectedTransactions>
     <Category>
-      <tr_11P>qwqwqw</tr_11P>
+      <tr_11P></tr_11P>
     </Category>
     <Comment>
       <tr_11P></tr_11P>
@@ -13,7 +13,7 @@
     <SumOfAllGasesS1>
       <tr_11P>
         <Code></Code>
-        <Amount>2000</Amount>
+        <Amount>100</Amount>
       </tr_11P>
     </SumOfAllGasesS1>
   </F7_s11EquImportTable>
