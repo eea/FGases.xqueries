@@ -2,7 +2,7 @@
 <FGasesReporting>
     <GeneralReportData>
         <Activities>
-            <D>false</D>
+            <D>true</D>
         </Activities>
     </GeneralReportData>
     <F1_S1_4_ProdImpExp>
