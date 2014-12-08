@@ -29,7 +29,21 @@ function test_xml {
     if [ $? != 0 ]; then
         echo "FAIL"
     else
-        echo "OK"
+        FN=`basename $1`
+        FN="${FN%.*}"
+        FN=`echo $FN | sed 's/_/ /g'`
+        OK="1"
+        for i in $FN; do
+            grep "$i" $OUTFILE &> /dev/null
+            if [ $? != 0 ]; then
+                echo "FAIL  $i not found in output"
+                OK=""
+                break
+            fi
+        done
+        if [ "$OK" != "" ]; then
+            echo "OK ($FN)"
+        fi
     fi
 }
 
