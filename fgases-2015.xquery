@@ -141,8 +141,8 @@ as element(div) {
 
   (: apply to rule 2016 :)
 
-  let $err_text := "You reported on own destruction in section 1B.
-    Please accordingly select to be a destruction company in the activity selection and report subsequently in section 8."
+  let $err_text := "You reported on own destruction in section 1B. Please accordingly select to
+      be a destruction company in the activity selection and report subsequently in section 8."
 
   let $err_flag :=
     sum($doc/F1_S1_4_ProdImpExp/Gas/tr_01B[number(Amount) > 1000])

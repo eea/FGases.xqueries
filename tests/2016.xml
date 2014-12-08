@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<FGasesReporting xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xml:lang="en" xsi:noNamespaceSchemaLocation="http://dd.eionet.europa.eu/schemas/fgases-2015/FGasesReporting.xsd">
-    <GeneralReportData status="incomplete">
+<FGasesReporting>
+    <GeneralReportData>
         <Activities>
             <D></D>
         </Activities>
@@ -10,7 +10,7 @@
             <GasCode>3</GasCode>
             <tr_01B>
                 <Code>01B</Code>
-                <Amount>500</Amount>
+                <Amount>1100</Amount>
             </tr_01B>
         </Gas>
         <Gas>
