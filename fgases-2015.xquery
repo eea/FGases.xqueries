@@ -345,7 +345,7 @@ as element(div) {
           else fn:false()
       else fn:false()
 
-  return uiutil:buildRuleResult("2030", $tran, $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
+  return uiutil:buildRuleResult("2300", $tran, $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
 
 };
 
