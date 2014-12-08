@@ -9,3 +9,14 @@ There are two entry points:
 Run:
 
     java -cp lib/saxon9-xqj.jar:lib/saxon9he.jar net.sf.saxon.Query -qversion:1.0 fgases-2015.xquery source_url=fgases-test.xml
+
+Testing
+-------
+
+All tests:
+
+    ./run_tests.sh
+
+Specififc rules only:
+
+    ./run_tests.sh 13 15

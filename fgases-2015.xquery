@@ -359,9 +359,8 @@ declare function xmlconv:rule_11($doc as element(),
 as element(div) {
 
   (: apply to rules 2301, 2302, 2303, 2304, 2305, 2306, 2307, 2308, 2310, 2311,
-                    2312, 2313, 2314, 2315, 2316, 2317, 2318, 2319, 2320, 2321,
-                    2322, 2323, 2324, 2327, 2328, 2329, 2330, 2331, 2332, 2333,
-                    2327, 2328, 2329, 2330, 2332, 2333 :)
+                    2312, 2313, 2314, 2315, 2316, 2317, 2318, 2319, 2320,
+                    2327, 2328, 2329, 2330, 2331, 2332, 2333 :)
 
   let $err_text := concat("The calculated specific charge of F-gases is not in the expected range
     (", $range_min," and ", $range_max, " ", $range_unit, "). Please make sure you correctly reported the amounts of gases in
