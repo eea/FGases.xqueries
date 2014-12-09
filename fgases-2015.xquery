@@ -145,7 +145,7 @@ as element(div) {
       be a destruction company in the activity selection and report subsequently in section 8."
 
   let $err_flag :=
-    sum($doc/F1_S1_4_ProdImpExp/Gas/tr_01B[number(Amount) > 1000])
+    sum($doc/F1_S1_4_ProdImpExp/Gas/tr_01B/Amount) > 1000
     and $doc/GeneralReportData/Activities/D != 'true'
 
   return uiutil:buildRuleResult("2016", "1B", $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
