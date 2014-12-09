@@ -508,8 +508,7 @@ as element(div) {
 
 
 declare function xmlconv:rule_18($doc as element(),
-                                 $range_unit as xs:string,
-                                 $rule as xs:string)
+                                 $range_unit as xs:string)
 as element(div) {
 
     (: apply to rule 2325 :)
@@ -560,7 +559,7 @@ as element(div) {
       then $xmlconv:BLOCKER
       else $xmlconv:WARNING
 
-    return uiutil:buildRuleResult($rule, "11H04", $err_text, $err_status, $err_flag, (), "")
+    return uiutil:buildRuleResult("2325", "11H04", $err_text, $err_status, $err_flag, (), "")
 };
 
 
@@ -666,7 +665,7 @@ as element(div)
     let $r2324 := xmlconv:rule_12($doc, "11H03", 0.5, "kg per container", "2324")
     let $r2325 :=
         for $unit in ('metrictonnes', 'cubicmetres', 'pieces')
-            return xmlconv:rule_18($doc, $unit, "2325")
+            return xmlconv:rule_18($doc, $unit)
     let $r2327 := xmlconv:rule_11($doc, "11I", 3.0, 500.0, "kg/piece", "2327")
     let $r2328 := xmlconv:rule_11($doc, "11J", 0.007, 0.020, "kg/piece", "2328")
     let $r2329 := xmlconv:rule_11($doc, "11K", 0.05, 0.5, "kg/piece", "2329")
