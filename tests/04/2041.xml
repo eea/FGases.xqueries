@@ -16,14 +16,14 @@
       <tr_06V>
         <Code>06V</Code>
         <Amount>100</Amount>
-        <Comment>sssss</Comment>
+        <Comment>comment</Comment>
       </tr_06V>
     </Gas>
     <Gas>
       <GasCode>4</GasCode>
       <tr_06V>
         <Code>06V</Code>
-        <Amount>100</Amount>
+        <Amount>-1</Amount>
         <Comment></Comment>
       </tr_06V>
     </Gas>

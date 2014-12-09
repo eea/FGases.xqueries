@@ -70,7 +70,7 @@
             <GasCode>2</GasCode>
             <tr_11A>
                 <Code></Code>
-                <Amount>1</Amount>
+                <Amount></Amount>
             </tr_11A>
             <tr_11A01>
                 <Code></Code>
@@ -336,7 +336,7 @@
             </tr_11A01>
             <tr_11A02>
                 <Code></Code>
-                <Amount></Amount>
+                <Amount>10</Amount>
             </tr_11A02>
             <tr_11A03>
                 <Code></Code>

@@ -174,17 +174,16 @@ as element(div) {
 
   (: apply to rule 2040 :)
 
-  let $err_text := "Please explain the 'other' intended apllication
-    / why the application its unknown."
+  let $err_text := "Please explain the 'other' intended application
+    / why the application is unknown."
 
   let $err_flag :=
     for $gas in $doc/F3A_S6A_IA_HFCs/Gas
     where $gas/tr_06T[number(Amount) > 0]
     return
-      if ($gas/tr_06T/Comment = '')
+      if (cutil:isEmpty($gas/tr_06T/Comment))
         then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
         else ()
-
 
   return uiutil:buildRuleResult("2040", "6T", $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
 };
@@ -195,16 +194,15 @@ as element(div) {
 
   (: apply to rule 2041 :)
 
-  let $err_text := "Please provide an explanation for accountancy adjustments"
+  let $err_text := "Please provide an explanation for accountancy adjustments."
 
   let $err_flag :=
     for $gas in $doc/F3A_S6A_IA_HFCs/Gas
     where $gas/tr_06V[number(Amount) != 0]
     return
-      if ($gas/tr_06V/Comment = '')
+      if (cutil:isEmpty($gas/tr_06V/Comment))
         then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
         else ()
-
 
   return uiutil:buildRuleResult("2041", "6V", $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
 };
@@ -239,9 +237,12 @@ as element(div) {
     Please check amounts reported for production, imports, exports,
     and stocks (sections 1 to 4)."
 
-  let $err_flag := $doc/F3A_S6A_IA_HFCs/Gas/tr_06X/Amount < 0
+  let $err_flag :=
+    for $gas in $doc/F3A_S6A_IA_HFCs/Gas
+    where $gas/tr_06X[number(Amount) < 0]
+    return data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
 
-  return uiutil:buildRuleResult("2043", "6X", $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
+  return uiutil:buildRuleResult("2043", "6X", $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
 };
 
 
@@ -257,16 +258,14 @@ as element(div) {
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
         for $gas in $doc/F7_s11EquImportTable/Gas
+        where ($gas/*[name()=concat('tr_', $tran)][number(Amount) > 0])
           return
-            if ($gas/*[name()=concat('tr_', $tran)][number(Amount) > 0])
-              then
-                if ($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran_unit, '_Unit')] = '')
-                  then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
-                  else ()
+            if ($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran_unit, '_Unit')] = '')
+              then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
               else ()
       else ()
 
-  return uiutil:buildRuleResult("2050", $tran, $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "")
+  return uiutil:buildRuleResult("2050", $tran, $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
 };
 
 
@@ -276,21 +275,22 @@ as element(div) {
   (: apply to rule 2051 :)
 
   let $err_text := "You reported on the amount of imported products/equipment.
-    Please report on the amount of contained gases , as well
+    Please report on the amount of contained gases, as well
     (unit: metric tonnes of gases)."
 
-  let $gases :=
-    for $gas in $doc/F7_s11EquImportTable/Gas
-    where fn:not(cutil:isEmpty($gas/*[name()=concat('tr_', $tran)]/Amount))
-    return $gas/GasCode
-
   let $err_flag :=
-    if ($doc/F7_s11EquImportTable/UISelectedTransactions/tr_11A01 = 'true'
-          and fn:count($gases) = 0)
-      then fn:true()
-      else fn:false()
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
+      then
+        if (fn:not(cutil:isEmpty($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount)))
+          then
+            for $gas in $doc/F7_s11EquImportTable/Gas
+            let $amount := $gas/*[name()=concat('tr_', $tran)]/Amount
+            where (cutil:isEmpty($amount) or number($amount) = 0)
+              return data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
+          else ()
+      else ()
 
- return uiutil:buildRuleResult("2051", $tran, $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
+ return uiutil:buildRuleResult("2051", $tran, $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
 };
 
 
@@ -434,21 +434,22 @@ as element(div) {
 
   (: apply to rule 2065 :)
 
-  let $err_text := "You reported on  the amount of contained gases in imported products/equipment.
-      Please report on the amount of imported products/equipment, as well"
+  let $err_text := "You reported on the amount of contained gases in imported products/equipment.
+      Please report on the amount of imported products/equipment, as well."
 
   let $gases :=
-    for $gas in $doc/F7_s11EquImportTable/Gas
-    where $gas/*[name()=concat('tr_', $tran)][number(Amount) > 0]
-    return $gas/GasCode
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
+      then
+        for $gas in $doc/F7_s11EquImportTable/Gas
+        where $gas/*[name()=concat('tr_', $tran)][number(Amount) > 0]
+        return $gas/GasCode
+      else ()
+
+  let $amount := $doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount
 
   let $err_flag :=
-    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true'
-        and fn:count($gases) > 0)
-      then
-        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount = '')
-        then fn:true()
-        else fn:false()
+    if (fn:count($gases) > 0 and (cutil:isEmpty($amount) or number($amount) = 0))
+      then fn:true()
       else fn:false()
 
   return uiutil:buildRuleResult(

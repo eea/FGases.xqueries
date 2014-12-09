@@ -35,7 +35,7 @@
             </tr_04I>
             <tr_04J>
                 <Code>04J</Code>
-                <Amount></Amount>
+                <Amount>0</Amount>
             </tr_04J>
         </Gas>
         <Gas>
@@ -46,11 +46,11 @@
             </tr_01E>
             <tr_03C>
                 <Code>03C</Code>
-                <Amount></Amount>
+                <Amount>-1</Amount>
             </tr_03C>
             <tr_04D>
                 <Code>04D</Code>
-                <Amount></Amount>
+                <Amount>-1</Amount>
             </tr_04D>
             <tr_04E>
                 <Code>04E</Code>
@@ -62,7 +62,7 @@
             </tr_04I>
             <tr_04J>
                 <Code>04J</Code>
-                <Amount></Amount>
+                <Amount>-1</Amount>
             </tr_04J>
         </Gas>
     </F1_S1_4_ProdImpExp>

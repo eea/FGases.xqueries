@@ -15,11 +15,11 @@
             <GasCode>3</GasCode>
             <tr_06W>
                 <Code>06W</Code>
-                <Amount>22</Amount>
+                <Amount>10</Amount>
             </tr_06W>
             <tr_06X>
                 <Code>06X</Code>
-                <Amount>2111</Amount>
+                <Amount>11</Amount>
             </tr_06X>
         </Gas>
         <Gas>
@@ -30,7 +30,7 @@
             </tr_06W>
             <tr_06X>
                 <Code>06X</Code>
-                <Amount>23</Amount>
+                <Amount>24</Amount>
             </tr_06X>
         </Gas>
     </F3A_S6A_IA_HFCs>
