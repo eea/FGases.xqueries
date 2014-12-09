@@ -260,7 +260,7 @@ as element(div) {
         for $gas in $doc/F7_s11EquImportTable/Gas
         where ($gas/*[name()=concat('tr_', $tran)][number(Amount) > 0])
           return
-            if ($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran_unit, '_Unit')] = '')
+            if (cutil:isMissingOrEmpty($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran_unit, '_Unit')]))
               then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
               else ()
       else ()
@@ -439,7 +439,7 @@ as element(div) {
   let $amount := $doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount
 
   let $err_flag :=
-    if (fn:count($gases) > 0 and (cutil:isEmpty($amount) or number($amount) = 0))
+    if (fn:count($gases) > 0 and (cutil:isMissingOrEmpty($amount) or number($amount) = 0))
       then fn:true()
       else fn:false()
 
