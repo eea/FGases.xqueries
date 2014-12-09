@@ -490,6 +490,25 @@ as element(div) {
 };
 
 
+declare function xmlconv:rule_17($doc as element())
+as element(div) {
+
+    (: apply to rule 2098 :)
+
+    let $err_text := "Re-exports in products/equipment (2B) must not exceed the sum of your total imports and 1st January stocks from own import/production not placed on the market (2A + 4C). Please revise your data."
+
+    let $err_flag :=
+        for $gas in $doc/ReportedGases
+        let $sum := number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_02A/Amount) + number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04C/Amount)
+        where (number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_02B/Amount) > $sum)
+        return data($gas/Name)
+
+    return uiutil:buildRuleResult("2098", "2B", $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
+};
+
+(:
+    End of rules
+:)
 declare function xmlconv:validateReport($url as xs:string)
 as element(div)
 {
@@ -541,6 +560,7 @@ as element(div)
     let $r2094 := xmlconv:rule_09($doc, "6I", "5F", "2094")
     let $r2095 := xmlconv:rule_09($doc, "6L", "5B", "2095")
     let $r2096 := xmlconv:rule_09($doc, "6M", "5E", "2096")
+    let $r2098 := xmlconv:rule_17($doc)
 
     let $r2300 :=
         xmlconv:rule_10($doc, '11P', '11P') | xmlconv:rule_10($doc, '11H04', '11H4')
@@ -616,6 +636,7 @@ as element(div)
         {$r2094}
         {$r2095}
         {$r2096}
+        {$r2098}
         {$r2300}
         {$r2301}
         {$r2302}

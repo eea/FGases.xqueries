@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FGasesReporting>
+    <ReportedGases>
+        <GasId>3</GasId>
+        <Code>HFC-32</Code>
+        <Name>HFC-32 (difluoromethane)</Name>
+    </ReportedGases>
+    <ReportedGases>
+        <GasId>4</GasId>
+        <Code>HFC-41</Code>
+        <Name>HFC-41 (fluoromethane, methyl fluoride)</Name>
+    </ReportedGases>
+    <F1_S1_4_ProdImpExp>
+        <Gas>
+            <GasCode>3</GasCode>
+            <tr_02A>
+                <Code>02A</Code>
+                <Amount>1</Amount>
+            </tr_02A>
+            <tr_02B>
+                <Code>02B</Code>
+                <Amount>3</Amount>
+            </tr_02B>
+            <tr_04C>
+                <Code>04C</Code>
+                <Amount>1</Amount>
+            </tr_04C>
+        </Gas>
+        <Gas>
+            <GasCode>4</GasCode>
+            <tr_02A>
+                <Code>02A</Code>
+                <Amount>2</Amount>
+            </tr_02A>
+            <tr_02B>
+                <Code>02B</Code>
+                <Amount></Amount>
+            </tr_02B>
+            <tr_04C>
+                <Code>04C</Code>
+                <Amount></Amount>
+            </tr_04C>
+        </Gas>
+    </F1_S1_4_ProdImpExp>
+</FGasesReporting>
+
+
