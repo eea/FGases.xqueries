@@ -2,7 +2,6 @@
 <FGasesReporting>
   <F7_s11EquImportTable>
     <UISelectedTransactions>
-      <tr_11H04>true</tr_11H04>
       <tr_11I>true</tr_11I>
       <tr_11J>true</tr_11J>
       <tr_11K>true</tr_11K>
@@ -12,7 +11,6 @@
       <tr_11O>true</tr_11O>
     </UISelectedTransactions>
     <Comment>
-      <tr_11H04>comment</tr_11H04>
       <tr_11I>comment</tr_11I>
       <tr_11J>comment</tr_11J>
       <tr_11K>comment</tr_11K>
@@ -22,12 +20,7 @@
       <tr_11O>comment</tr_11O>
       <tr_11P>comment</tr_11P>
     </Comment>
-    <TR_11H4_Unit></TR_11H4_Unit>
     <AmountOfImportedEquipment>
-      <tr_11H04>
-        <Code></Code>
-        <Amount></Amount>
-      </tr_11H04>
       <tr_11I>
         <Code></Code>
         <Amount>600</Amount>

@@ -335,13 +335,11 @@ as element(div) {
     therefore a value or unit must be incorrect. Please revise reported data or units."
 
   let $err_flag :=
-    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true'
+      and $doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran_unit, '_Unit')] = 'metrictonnes')
       then
-        if ($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran_unit, '_Unit')] = 'metrictonnes')
-          then
-            if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount > 1000)
-              then fn:true()
-              else fn:false()
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount > 1000)
+          then fn:true()
           else fn:false()
       else fn:false()
 
@@ -368,21 +366,19 @@ as element(div) {
     calculated specific charge.")
 
   let $err_flag :=
-    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true'
+      and fn:not(cutil:isMissingOrEmpty($doc/F7_s11EquImportTable/AmountOfImportedEquipment)))
       then
-        if ($doc/F7_s11EquImportTable[AmountOfImportedEquipment != ''])
-          then
-            if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/
-                *[name()=concat('tr_', $tran)]
-                [number(Amount) > $range_min]
-                [number(Amount) < $range_max])
-              then fn:false()
-              else fn:true()
-          else fn:false()
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/
+            *[name()=concat('tr_', $tran)]
+            [number(Amount) > $range_min]
+            [number(Amount) < $range_max])
+          then fn:false()
+          else fn:true()
       else fn:false()
 
   let $err_status :=
-    if ($doc/F7_s11EquImportTable/Comment/*[name()=concat('tr_', $tran)] = '')
+    if (cutil:isMissingOrEmpty($doc/F7_s11EquImportTable/Comment/*[name()=concat('tr_', $tran)]))
       then $xmlconv:BLOCKER
       else $xmlconv:WARNING
 
