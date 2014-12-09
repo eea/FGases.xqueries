@@ -402,14 +402,11 @@ as element(div) {
     calculated specific charge.")
 
   let $err_flag :=
-    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true'
+      and fn:not(cutil:isMissingOrEmpty($doc/F7_s11EquImportTable/AmountOfImportedEquipment)))
       then
-        if ($doc/F7_s11EquImportTable[AmountOfImportedEquipment != ''])
-          then
-            if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()
-                =concat('tr_', $tran)]/Amount[number() < $range_max])
-              then fn:false()
-              else fn:true()
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount[number() >= $range_max])
+          then fn:true()
           else fn:false()
       else fn:false()
 
