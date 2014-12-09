@@ -490,6 +490,34 @@ as element(div) {
 };
 
 
+declare function xmlconv:rule_16($doc as element())
+as element(div) {
+
+  (: apply to rule 2080 :)
+
+  let $err_text := "The totals reported in section 5 are implausibly high (5G + 5C_voluntary > 4M + 4D -4I).
+    Please revise your data."
+
+  let $err_flag :=
+    for $gas in $doc/ReportedGases
+
+      let $sum_4 :=
+        number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04M/Amount) +
+        number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04D/Amount)
+
+      let $sum_5 :=
+        number($doc/F2_S5_exempted_HFCs/Gas[GasCode=$gas/GasId]/tr_05G/Amount) +
+        number($doc/F2_S5_exempted_HFCs/Gas[GasCode=$gas/GasId]/tr_05R/Amount) +
+        number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04I/Amount)
+
+      where ($sum_5 > $sum_4)
+        return data($gas/Name)
+
+  return uiutil:buildRuleResult("2039", "5G", $err_text, $xmlconv:BLOCKER,
+         count($err_flag)>0, $err_flag, "Invalid gases are: ")
+};
+
+
 declare function xmlconv:rule_17($doc as element())
 as element(div) {
 
@@ -566,6 +594,7 @@ as element(div) {
 (:
     End of rules
 :)
+
 declare function xmlconv:validateReport($url as xs:string)
 as element(div)
 {
@@ -577,6 +606,7 @@ as element(div)
         for $tran in ('1E', '3C', '4D', '4E', '4I', '4J')
             return xmlconv:rule_02($doc, $tran)
 
+    let $r2039 := xmlconv:rule_16($doc)
     let $r2040 := xmlconv:rule_03($doc)
     let $r2041 := xmlconv:rule_04($doc)
     let $r2042 := xmlconv:rule_05($doc)
@@ -680,6 +710,7 @@ as element(div)
         <h4>Error details</h4>
         {$r2016}
         {$r2017}
+        {$r2039}
         {$r2040}
         {$r2041}
         {$r2042}

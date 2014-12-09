@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FGasesReporting>
+  <ReportedGases>
+    <GasGroup>HFCs</GasGroup>
+    <GasId>2</GasId>
+    <Code>HFC-23</Code>
+    <Name>HFC-23 (trifluoromethane, fluoroform)</Name>
+  </ReportedGases>
+  <F1_S1_4_ProdImpExp>
+    <Gas>
+      <GasCode>2</GasCode>
+      <tr_04D>
+        <Code>04D</Code>
+        <Amount>100</Amount>
+      </tr_04D>
+      <tr_04I>
+        <Code>04I</Code>
+        <Amount>100</Amount>
+      </tr_04I>
+      <tr_04M>
+        <Code>04M</Code>
+        <Amount>108</Amount>
+      </tr_04M>
+    </Gas>
+  </F1_S1_4_ProdImpExp>
+  <F2_S5_exempted_HFCs>
+    <Gas>
+      <GasCode>2</GasCode>
+      <tr_05G>
+        <Code>05G</Code>
+        <Amount>1000</Amount>
+      </tr_05G>
+      <tr_05R>
+        <Code>05R</Code>
+        <Amount>1000</Amount>
+      </tr_05R>
+    </Gas>
+  </F2_S5_exempted_HFCs>
+</FGasesReporting>
