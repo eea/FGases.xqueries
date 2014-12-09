@@ -305,23 +305,21 @@ as element(div) {
     Please revise your data."
 
   let $gases :=
-    for $gas in $doc/GeneralReportData/HFCs/GasName
-    for $mixture in $doc/GeneralReportData/CommonlyUsedMixtures/GasName
-    return $gas | $mixture
+    for $gas in $doc/ReportedGases
+    where $gas/IsBlend = 'true'
+    return $gas/GasId
 
   let $err_flag :=
     for $gas in $gases
 
-    let $node_exempted := $doc/F2_S5_exempted_HFCs/Gas[GasCode=$gas]/*[name()=concat('tr_0', $exempt_tran)]/SumOfPartnerAmounts
     let $node_gas := $doc/F3A_S6A_IA_HFCs/Gas[GasCode=$gas]/*[name()=concat('tr_0', $tran)]/Amount
+    let $node_exempted := $doc/F2_S5_exempted_HFCs/Gas[GasCode=$gas]/*[name()=concat('tr_0', $exempt_tran)]/SumOfPartnerAmounts
 
     return
-      if ($node_exempted != '' and $node_gas != '')
-        then
-          if (fn:number($node_gas) ge fn:number($node_exempted))
-          then ()
-          else data($doc/ReportedGases[GasId eq $gas]/Name)
-        else ()
+      if (fn:not(cutil:isMissingOrEmpty($node_exempted) or cutil:isMissingOrEmpty($node_gas))
+        and fn:number($node_gas) lt fn:number($node_exempted))
+          then data($doc/ReportedGases[GasId eq $gas]/Name)
+          else ()
 
   return uiutil:buildRuleResult($rule, $tran, $err_text, $xmlconv:BLOCKER,
          count($err_flag)>0, $err_flag, "Invalid gases are: ")
