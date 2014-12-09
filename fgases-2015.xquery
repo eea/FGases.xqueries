@@ -281,11 +281,11 @@ as element(div) {
   let $err_flag :=
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
-        if (fn:not(cutil:isEmpty($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount)))
+        if (fn:not(cutil:isMissingOrEmpty($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount)))
           then
             for $gas in $doc/F7_s11EquImportTable/Gas
             let $amount := $gas/*[name()=concat('tr_', $tran)]/Amount
-            where (cutil:isEmpty($amount) or number($amount) = 0)
+            where (cutil:isMissingOrEmpty($amount) or number($amount) = 0)
               return data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
           else ()
       else ()
@@ -465,14 +465,10 @@ as element(div) {
   let $err_text := "Please explain the category of imported products/equipment."
 
   let $err_flag :=
-    if ($doc/F7_s11EquImportTable/UISelectedTransactions/tr_11P = 'true')
-      then
-        if ($doc/F7_s11EquImportTable/SumOfAllGasesS1/tr_11P[number(Amount) > 0])
-          then
-            if ($doc/F7_s11EquImportTable/Category/tr_11P != '')
-              then fn:false()
-              else fn:true()
-          else fn:false()
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/tr_11P = 'true'
+      and $doc/F7_s11EquImportTable/SumOfAllGasesS1/tr_11P[number(Amount) > 0]
+      and cutil:isMissingOrEmpty($doc/F7_s11EquImportTable/Category/tr_11P))
+      then fn:true()
       else fn:false()
 
   return uiutil:buildRuleResult("2079", "11P", $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
