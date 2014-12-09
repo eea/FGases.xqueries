@@ -506,6 +506,64 @@ as element(div) {
     return uiutil:buildRuleResult("2098", "2B", $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
 };
 
+
+declare function xmlconv:rule_18($doc as element(),
+                                 $range_unit as xs:string,
+                                 $rule as xs:string)
+as element(div) {
+
+    (: apply to rule 2325 :)
+
+    let $unit_text :=
+        if ($range_unit = 'pieces')
+            then 'kg/piece'
+            else
+                if ($range_unit = 'cubicmetres')
+                    then 'kg/cubic meter'
+                    else 'kg/tonnes'
+
+    let $range_min :=
+        if ($range_unit = 'pieces')
+            then 0
+            else
+                if ($range_unit = 'cubicmetres')
+                    then 1
+                    else 10
+
+    let $range_max :=
+        if ($range_unit = 'pieces')
+            then 1000
+            else
+                if ($range_unit = 'cubicmetres')
+                    then 10
+                    else 100
+
+    let $err_text := concat("The calculated specific charge of F-gases is not in the expected range
+        (", $range_min," and ", $range_max, " ", $unit_text, "). Please make sure you correctly reported the amounts of gases in
+        units of tonnes, not in kilograms. Please revise your data or provide an explanation to the
+        calculated specific charge.")
+
+    let $err_flag :=
+    if ($doc/F7_s11EquImportTable/UISelectedTransactions/tr_11H04 = 'true'
+      and fn:not(cutil:isMissingOrEmpty($doc/F7_s11EquImportTable/AmountOfImportedEquipment))
+      and $doc/F7_s11EquImportTable/TR_11H4_Unit = $range_unit)
+      then
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/tr_11H04
+            [number(Amount) > $range_min]
+            [number(Amount) < $range_max])
+          then fn:false()
+          else fn:true()
+      else fn:false()
+
+    let $err_status :=
+    if (cutil:isMissingOrEmpty($doc/F7_s11EquImportTable/Comment/tr_11H04))
+      then $xmlconv:BLOCKER
+      else $xmlconv:WARNING
+
+    return uiutil:buildRuleResult($rule, "11H04", $err_text, $err_status, $err_flag, (), "")
+};
+
+
 (:
     End of rules
 :)
@@ -606,7 +664,9 @@ as element(div)
     let $r2322 := xmlconv:rule_12($doc, "11H01", 1040.0, "kg/cubic metre", "2322")
     let $r2323 := xmlconv:rule_12($doc, "11H02", 100.0, "kg/cubic metre", "2323")
     let $r2324 := xmlconv:rule_12($doc, "11H03", 0.5, "kg per container", "2324")
-
+    let $r2325 :=
+        for $unit in ('metrictonnes', 'cubicmetres', 'pieces')
+            return xmlconv:rule_18($doc, $unit, "2325")
     let $r2327 := xmlconv:rule_11($doc, "11I", 3.0, 500.0, "kg/piece", "2327")
     let $r2328 := xmlconv:rule_11($doc, "11J", 0.007, 0.020, "kg/piece", "2328")
     let $r2329 := xmlconv:rule_11($doc, "11K", 0.05, 0.5, "kg/piece", "2329")
@@ -661,6 +721,7 @@ as element(div)
         {$r2322}
         {$r2323}
         {$r2324}
+        {$r2325}
         {$r2327}
         {$r2328}
         {$r2329}
