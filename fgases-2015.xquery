@@ -136,7 +136,7 @@ declare variable $source_url := "http://cdrtest.eionet.europa.eu/de/colt_cs2a/co
  : ======================================================================
  :)
 
-declare function xmlconv:rule_1($doc as element())
+declare function xmlconv:rule_01($doc as element())
 as element(div) {
 
   (: apply to rule 2016 :)
@@ -152,7 +152,7 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_2($doc as element(), $tran as xs:string)
+declare function xmlconv:rule_02($doc as element(), $tran as xs:string)
 as element(div) {
 
   (: apply to rule 2017 :)
@@ -169,7 +169,7 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_3($doc as element())
+declare function xmlconv:rule_03($doc as element())
 as element(div) {
 
   (: apply to rule 2040 :)
@@ -189,7 +189,7 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_4($doc as element())
+declare function xmlconv:rule_04($doc as element())
 as element(div) {
 
   (: apply to rule 2041 :)
@@ -208,7 +208,7 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_5($doc as element())
+declare function xmlconv:rule_05($doc as element())
 as element(div) {
 
   (: apply to rule 2042 :)
@@ -228,7 +228,7 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_6($doc as element())
+declare function xmlconv:rule_06($doc as element())
 as element(div) {
 
   (: apply to rule 2043 :)
@@ -246,7 +246,7 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_7($doc as element(), $tran as xs:string, $tran_unit as xs:string)
+declare function xmlconv:rule_07($doc as element(), $tran as xs:string, $tran_unit as xs:string)
 as element(div) {
 
   (: apply to rule 2050 :)
@@ -269,7 +269,7 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_8($doc as element(), $tran as xs:string)
+declare function xmlconv:rule_08($doc as element(), $tran as xs:string)
 as element(div) {
 
   (: apply to rule 2051 :)
@@ -294,7 +294,7 @@ as element(div) {
 };
 
 
-declare function xmlconv:rule_9($doc as element(), $tran as xs:string,
+declare function xmlconv:rule_09($doc as element(), $tran as xs:string,
                                    $exempt_tran as xs:string, $rule as xs:string)
 as element(div) {
 
@@ -495,19 +495,19 @@ as element(div)
 {
     let $doc := fn:doc($url)/FGasesReporting
 
-    let $r2016 := xmlconv:rule_1($doc)
+    let $r2016 := xmlconv:rule_01($doc)
 
     let $r2017 :=
         for $tran in ('1E', '3C', '4D', '4E', '4I', '4J')
-            return xmlconv:rule_2($doc, $tran)
+            return xmlconv:rule_02($doc, $tran)
 
-    let $r2040 := xmlconv:rule_3($doc)
-    let $r2041 := xmlconv:rule_4($doc)
-    let $r2042 := xmlconv:rule_5($doc)
-    let $r2043 := xmlconv:rule_6($doc)
+    let $r2040 := xmlconv:rule_03($doc)
+    let $r2041 := xmlconv:rule_04($doc)
+    let $r2042 := xmlconv:rule_05($doc)
+    let $r2043 := xmlconv:rule_06($doc)
 
     let $r2050 :=
-        xmlconv:rule_7($doc, '11P', '11P') | xmlconv:rule_7($doc, '11H04', '11H4')
+        xmlconv:rule_07($doc, '11P', '11P') | xmlconv:rule_07($doc, '11H04', '11H4')
 
     let $r2051 :=
         for $tran in ('11A01', '11A02', '11A03', '11A04', '11A05', '11A06', '11A07',
@@ -518,7 +518,7 @@ as element(div)
                       '11E04', '11F01', '11F02', '11F03', '11F04', '11F05', '11F06',
                       '11F07', '11F08', '11F09', '11H01', '11H02', '11H03', '11H04',
                       '11I', '11J', '11K', '11L', '11M', '11N', '11O', '11P')
-            return xmlconv:rule_8($doc, $tran)
+            return xmlconv:rule_08($doc, $tran)
 
     let $r2065 :=
         for $tran in ('11A01', '11A02', '11A03', '11A04', '11A05', '11A06', '11A07',
@@ -535,12 +535,12 @@ as element(div)
     let $r2078 := xmlconv:rule_15($doc)
     let $r2079 := xmlconv:rule_14($doc)
 
-    let $r2091 := xmlconv:rule_9($doc, "6A", "5C", "2091")
-    let $r2092 := xmlconv:rule_9($doc, "6B", "5A", "2092")
-    let $r2093 := xmlconv:rule_9($doc, "6C", "5D", "2093")
-    let $r2094 := xmlconv:rule_9($doc, "6I", "5F", "2094")
-    let $r2095 := xmlconv:rule_9($doc, "6L", "5B", "2095")
-    let $r2096 := xmlconv:rule_9($doc, "6M", "5E", "2096")
+    let $r2091 := xmlconv:rule_09($doc, "6A", "5C", "2091")
+    let $r2092 := xmlconv:rule_09($doc, "6B", "5A", "2092")
+    let $r2093 := xmlconv:rule_09($doc, "6C", "5D", "2093")
+    let $r2094 := xmlconv:rule_09($doc, "6I", "5F", "2094")
+    let $r2095 := xmlconv:rule_09($doc, "6L", "5B", "2095")
+    let $r2096 := xmlconv:rule_09($doc, "6M", "5E", "2096")
 
     let $r2300 :=
         xmlconv:rule_10($doc, '11P', '11P') | xmlconv:rule_10($doc, '11H04', '11H4')
