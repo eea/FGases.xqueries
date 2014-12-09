@@ -490,9 +490,9 @@ as element(div) {
   let $err_flag :=
     for $gas in $gases
     return
-      if ($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas]/tr_01H[number(Amount) >= 0])
-        then ()
-        else data($doc/ReportedGases[GasId eq $gas]/Name)
+      if ($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas]/tr_01H[number(Amount) < 0])
+        then data($doc/ReportedGases[GasId eq $gas]/Name)
+        else ()
 
   return uiutil:buildRuleResult("2078", "1H", $err_text, $xmlconv:BLOCKER,
          count($err_flag)>0, $err_flag, "Invalid gases are: ")
