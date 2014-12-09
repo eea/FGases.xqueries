@@ -20,9 +20,9 @@ function test_rule {
 
 function test_xml {
     SEARCH_TEXT="Blocking errors"
-    OUTFILE=/tmp/_out.html
+    OUTFILE=output/output.html
 
-    java -cp lib/saxon9-xqj.jar:lib/saxon9he.jar net.sf.saxon.Query -qversion:1.0 fgases-2015.xquery source_url=$1 > $OUTFILE 2> /dev/null
+    java -cp lib/saxon9-xqj.jar:lib/saxon9he.jar net.sf.saxon.Query -qversion:1.0 fgases-2015.xquery source_url=$1 > $OUTFILE
 
     grep "$SEARCH_TEXT" $OUTFILE &> /dev/null
 
