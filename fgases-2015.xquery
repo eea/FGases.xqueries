@@ -7,7 +7,7 @@ xquery version "1.0" encoding "UTF-8";
  : Copyright:   European Environment Agency
  :)
 (:~
- : Reporting Obligation: http://rod.eionet.europa.eu/obligations/669
+ : Reporting Obligation: http://rod.eionet.europa.eu/obligations/713
  : XML Schema: http://dd.eionet.europa.eu/schemas/fgases-2015/FGasesReporting.xsd
  :
  : F-Gases QA Rules implementation
@@ -136,6 +136,20 @@ declare variable $source_url := "http://cdrtest.eionet.europa.eu/de/colt_cs2a/co
  : ======================================================================
  :)
 
+declare function xmlconv:rule_ReportStatus($doc as element())
+as element(div) {
+
+(: check webform status, it has to be submitted - click "Close report" button on Finish tab :)
+
+    let $err_text := "You have closed the webform, but ignored the 'Review of the webform' sheet on Finish tab.
+     Please click 'Close report' button to finalise the report.
+     If the review page displys any blocking validation error, then they must be repaired before an acceptable submission of this report."
+
+    let $err_flag := lower-case(data($doc/GeneralReportData/@status)) != "submitted"
+
+    return uiutil:buildRuleResult("status", "", $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
+};
+
 declare function xmlconv:rule_01($doc as element())
 as element(div) {
 
@@ -145,7 +159,7 @@ as element(div) {
       be a destruction company in the activity selection and report subsequently in section 8."
 
   let $err_flag :=
-    sum($doc/F1_S1_4_ProdImpExp/Gas/tr_01B/Amount) > 1000
+      sum($doc/F1_S1_4_ProdImpExp/Gas/tr_01B/cutil:getZeroIfNotNumber(Amount)) > 1000
     and $doc/GeneralReportData/Activities/D != 'true'
 
   return uiutil:buildRuleResult("2016", "1B", $err_text, $xmlconv:BLOCKER, $err_flag, (), "")
@@ -161,7 +175,7 @@ as element(div) {
 
   let $err_flag :=
     for $gas in $doc/F1_S1_4_ProdImpExp/Gas
-    where $gas/*[name()=concat('tr_0', $tran)][number(Amount) < 0]
+    where $gas/*[name()=concat('tr_0', $tran)][Amount castable as xs:decimal and number(Amount) < 0]
     return
       data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
 
@@ -179,7 +193,7 @@ as element(div) {
 
   let $err_flag :=
     for $gas in $doc/F3A_S6A_IA_HFCs/Gas
-    where $gas/tr_06T[number(Amount) > 0]
+    where $gas/tr_06T[Amount castable as xs:decimal and number(Amount) > 0]
     return
       if (cutil:isEmpty($gas/tr_06T/Comment))
         then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
@@ -198,7 +212,7 @@ as element(div) {
 
   let $err_flag :=
     for $gas in $doc/F3A_S6A_IA_HFCs/Gas
-    where $gas/tr_06V[number(Amount) != 0]
+    where $gas/tr_06V[Amount castable as xs:decimal and number(Amount) != 0]
     return
       if (cutil:isEmpty($gas/tr_06V/Comment))
         then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
@@ -239,7 +253,7 @@ as element(div) {
 
   let $err_flag :=
     for $gas in $doc/F3A_S6A_IA_HFCs/Gas
-    where $gas/tr_06X[number(Amount) < 0]
+    where $gas/tr_06X[Amount castable as xs:decimal and number(Amount) < 0]
     return data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
 
   return uiutil:buildRuleResult("2043", "6X", $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
@@ -258,7 +272,7 @@ as element(div) {
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
         for $gas in $doc/F7_s11EquImportTable/Gas
-        where ($gas/*[name()=concat('tr_', $tran)][number(Amount) > 0])
+        where ($gas/*[name()=concat('tr_', $tran)][Amount castable as xs:decimal and number(Amount) > 0])
           return
             if (cutil:isMissingOrEmpty($doc/F7_s11EquImportTable/*[name()=concat('TR_', $tran_unit, '_Unit')]))
               then data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
@@ -285,7 +299,7 @@ as element(div) {
           then
             for $gas in $doc/F7_s11EquImportTable/Gas
             let $amount := $gas/*[name()=concat('tr_', $tran)]/Amount
-            where (cutil:isMissingOrEmpty($amount) or number($amount) = 0)
+            where (cutil:isMissingOrEmpty($amount) or ($amount castable as xs:decimal and number($amount) = 0))
               return data($doc/ReportedGases[GasId = $gas/GasCode]/Name)
           else ()
       else ()
@@ -317,7 +331,7 @@ as element(div) {
 
     return
       if (fn:not(cutil:isMissingOrEmpty($node_exempted) or cutil:isMissingOrEmpty($node_gas))
-        and fn:number($node_gas) lt fn:number($node_exempted))
+        and $node_gas castable as xs:decimal and $node_exempted castable as xs:decimal and fn:number($node_gas) lt fn:number($node_exempted))
           then data($doc/ReportedGases[GasId eq $gas]/Name)
           else ()
 
@@ -371,8 +385,8 @@ as element(div) {
       then
         if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/
             *[name()=concat('tr_', $tran)]
-            [number(Amount) > $range_min]
-            [number(Amount) < $range_max])
+            [Amount castable as xs:decimal and number(Amount) > $range_min]
+            [Amount castable as xs:decimal and number(Amount) < $range_max])
           then fn:false()
           else fn:true()
       else fn:false()
@@ -405,7 +419,7 @@ as element(div) {
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true'
       and fn:not(cutil:isMissingOrEmpty($doc/F7_s11EquImportTable/AmountOfImportedEquipment)))
       then
-        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount[number() >= $range_max])
+        if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount[. castable as xs:decimal and number() >= $range_max])
           then fn:true()
           else fn:false()
       else fn:false()
@@ -432,14 +446,14 @@ as element(div) {
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/*[name()=concat('tr_', $tran)] = 'true')
       then
         for $gas in $doc/F7_s11EquImportTable/Gas
-        where $gas/*[name()=concat('tr_', $tran)][number(Amount) > 0]
+        where $gas/*[name()=concat('tr_', $tran)][Amount castable as xs:decimal and number(Amount) > 0]
         return $gas/GasCode
       else ()
 
   let $amount := $doc/F7_s11EquImportTable/AmountOfImportedEquipment/*[name()=concat('tr_', $tran)]/Amount
 
   let $err_flag :=
-    if (fn:count($gases) > 0 and (cutil:isMissingOrEmpty($amount) or number($amount) = 0))
+    if (fn:count($gases) > 0 and (cutil:isMissingOrEmpty($amount) or ($amount castable as xs:decimal and number($amount) = 0)))
       then fn:true()
       else fn:false()
 
@@ -457,7 +471,7 @@ as element(div) {
 
   let $err_flag :=
     if ($doc/F7_s11EquImportTable/UISelectedTransactions/tr_11P = 'true'
-      and $doc/F7_s11EquImportTable/SumOfAllGasesS1/tr_11P[number(Amount) > 0]
+      and $doc/F7_s11EquImportTable/SumOfAllGasesS1/tr_11P[Amount castable as xs:decimal and number(Amount) > 0]
       and cutil:isMissingOrEmpty($doc/F7_s11EquImportTable/Category/tr_11P))
       then fn:true()
       else fn:false()
@@ -481,7 +495,7 @@ as element(div) {
   let $err_flag :=
     for $gas in $gases
     return
-      if ($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas]/tr_01H[number(Amount) < 0])
+      if ($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas]/tr_01H[Amount castable as xs:decimal and number(Amount) < 0])
         then data($doc/ReportedGases[GasId eq $gas]/Name)
         else ()
 
@@ -502,13 +516,13 @@ as element(div) {
     for $gas in $doc/ReportedGases
 
       let $sum_4 :=
-        number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04M/Amount) +
-        number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04D/Amount)
+        cutil:getZeroIfNotNumber($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04M/Amount) +
+                cutil:getZeroIfNotNumber($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04D/Amount)
 
       let $sum_5 :=
-        number($doc/F2_S5_exempted_HFCs/Gas[GasCode=$gas/GasId]/tr_05G/Amount) +
-        number($doc/F2_S5_exempted_HFCs/Gas[GasCode=$gas/GasId]/tr_05R/Amount) +
-        number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04I/Amount)
+          cutil:getZeroIfNotNumber($doc/F2_S5_exempted_HFCs/Gas[GasCode=$gas/GasId]/tr_05G/Amount) +
+                  cutil:getZeroIfNotNumber($doc/F2_S5_exempted_HFCs/Gas[GasCode=$gas/GasId]/tr_05R/Amount) +
+                  cutil:getZeroIfNotNumber($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04I/Amount)
 
       where ($sum_5 > $sum_4)
         return data($gas/Name)
@@ -527,8 +541,8 @@ as element(div) {
 
     let $err_flag :=
         for $gas in $doc/ReportedGases
-        let $sum := number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_02A/Amount) + number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04C/Amount)
-        where (number($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_02B/Amount) > $sum)
+        let $sum := cutil:getZeroIfNotNumber($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_02A/Amount) + cutil:getZeroIfNotNumber($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_04C/Amount)
+        where (cutil:getZeroIfNotNumber($doc/F1_S1_4_ProdImpExp/Gas[GasCode=$gas/GasId]/tr_02B/Amount) > $sum)
         return data($gas/Name)
 
     return uiutil:buildRuleResult("2098", "2B", $err_text, $xmlconv:BLOCKER, count($err_flag)>0, $err_flag, "Invalid gases are: ")
@@ -576,8 +590,8 @@ as element(div) {
       and $doc/F7_s11EquImportTable/TR_11H4_Unit = $range_unit)
       then
         if ($doc/F7_s11EquImportTable/AmountOfImportedEquipment/tr_11H04
-            [number(Amount) > $range_min]
-            [number(Amount) < $range_max])
+            [Amount castable as xs:decimal and number(Amount) > $range_min]
+            [Amount castable as xs:decimal and number(Amount) < $range_max])
           then fn:false()
           else fn:true()
       else fn:false()
@@ -599,6 +613,8 @@ declare function xmlconv:validateReport($url as xs:string)
 as element(div)
 {
     let $doc := fn:doc($url)/FGasesReporting
+
+    let $rStatus := xmlconv:rule_ReportStatus($doc)
 
     let $r2016 := xmlconv:rule_01($doc)
 
@@ -708,6 +724,7 @@ as element(div)
   return
     <div class="errors">
         <h4>Error details</h4>
+        {$rStatus}
         {$r2016}
         {$r2017}
         {$r2039}

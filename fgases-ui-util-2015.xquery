@@ -611,7 +611,7 @@ as element(span)
         if ($countErrors = 0) then
             <span style="background-color: green; font-size: 0.8em; color: white; padding-left:3px;padding-right:9px;text-align:center" title="{ $bulletTitle }">OK</span>
         else
-             <span style="background-color: { uiutil:getErrorColor($errLevel) }; font-size: 0.8em; color: white; padding-left:{ $padding }px;padding-right:{ $padding  }px;text-align:center" title="{ $bulletTitle }">{ $countErrors }</span>
+             <span style="background-color: { uiutil:getErrorColor($errLevel) }; font-size: 0.8em; color: white; padding-left:{ $padding }px;padding-right:{ $padding  }px;text-align:center;margin-right:9px" title="{ $bulletTitle }">{ $countErrors }</span>
 };
 (:~
  : Create rule result message displayed in the list of rules at the end of each rule.
@@ -827,7 +827,7 @@ as element(div)
             <div>
                 <div>{
                     uiutil:buildErrorBullet($countErrors, "", $errLevel)
-                } <strong>Transaction { $transactionCode }</strong> -
+                } { if (string-length($transactionCode) > 0) then <strong>Transaction { $transactionCode } - </strong> else () }
                     <span>{ $errorText }</span>
                     <span> (code={ $ruleCode })</span>
                 </div>

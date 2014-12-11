@@ -366,3 +366,8 @@ else
 }
 ;
 
+declare function cutil:getZeroIfNotNumber($value as xs:string?)
+as xs:decimal {
+    if ($value castable as xs:decimal) then xs:decimal($value) else 0
+};
+
