@@ -3,12 +3,12 @@ xquery version "1.0";
  : Module Name: FGases dataflow envelope level check(Main module)
  :
  : Version:     $Id$
- : Created:     26 February 2013
+ : Created:     10 December 2014
  : Copyright:   European Environment Agency
  :)
 (:~
- : Reporting Obligation: http://rod.eionet.europa.eu/obligations/669
- : XML Schema: http://dd.eionet.europa.eu/schemas/fgases/FGasesReporting.xsd
+ : Reporting Obligation: http://rod.eionet.europa.eu/obligations/713
+ : XML Schema:  : XML Schema: http://dd.eionet.europa.eu/schemas/fgases-2015/FGasesReporting.xsd
  :
  : F-Gases QA Rules implementation
  :
@@ -20,11 +20,9 @@ declare namespace xmlconv="http://converters.eionet.europa.eu/fgases";
 (: namespace for BDR localisations :)
 declare namespace i18n = "http://namespaces.zope.org/i18n";
 (: Common utility methods :)
-import module namespace cutil = "http://converters.eionet.europa.eu/fgases/cutil" at "fgases-common-util.xquery";
+import module namespace cutil = "http://converters.eionet.europa.eu/fgases/cutil" at "fgases-common-util-2015.xquery";
 (: UI utility methods for build HTML formatted QA result:)
-import module namespace uiutil = "http://converters.eionet.europa.eu/fgases/ui" at "fgases-ui-util.xquery";
-(: Dataset rule definitions and utility methods:)
-import module namespace rules = "http://converters.eionet.europa.eu/fgases/rules" at "fgases-rules-2012.xquery";
+import module namespace uiutil = "http://converters.eionet.europa.eu/fgases/ui" at "fgases-ui-util-2015.xquery";
 (:===================================================================:)
 (: Variable given as an external parameter by the QA service:)
 (:===================================================================:)
@@ -34,7 +32,7 @@ declare variable $source_url as xs:string external;
 :)
 declare variable $source_url as xs:string external;
 
-declare variable $SCHEMA as xs:string := $rules:FGASES_SCHEMA;
+declare variable $SCHEMA as xs:string := " : XML Schema: http://dd.eionet.europa.eu/schemas/fgases-2015/FGasesReporting.xsd";
 declare variable $REPORT_TYPE as xs:string := "F-Gases";
 declare variable $HELPDESK_EMAIL as xs:string := "f-gases.reporting@eea.europa.eu";
 
@@ -64,10 +62,9 @@ as element(div)
     let $files := fn:doc($url)//file[string-length(@link)>0]
 
     let $filesCountAll := count($files)
-    let $filesCountCorrectSchema := count($files[@schema = $SCHEMA or @schema = $rules:NIL_SCHEMA])
+    let $filesCountCorrectSchema := count($files[@schema = $SCHEMA])
 
     let $filesCountMainSchema := count($files[@schema = $SCHEMA])
-    let $filesCountNilSchema := count($files[@schema = $rules:NIL_SCHEMA])
 
     let $filesCountXml := count($files[@type="text/xml"])
 
@@ -77,9 +74,6 @@ as element(div)
         if ($filesCountCorrectSchema = 0) then
             <span><span i18n:translate="">Your delivery cannot be accepted as you did not complete the online questionnaire as instructed in the BDR user manual.</span>
 <br/><br/><span i18n:translate="">Please create a new envelope, fill in the online questionnaire and re-submit.</span></span>
-        else if ($filesCountMainSchema >= 1 and $filesCountNilSchema >= 1) then
-            <span><span i18n:translate="">The submission cannot be accepted as an envelope can contain either a F-gases questionnaire or a NIL reporting questionnaire, not both.</span>
-<br/><br/><span i18n:translate="">Please delete the file(s) you don't want to keep and then retry to submit to DG CLIMA/EEA.</span></span>
         else if ($filesCountCorrectSchema >= 1 and $filesCountXml > 1) then
             <span><span i18n:translate="">Your delivery cannot be accepted as you have provided more than one xml files (you have completed more than one online questionnaires).</span>
 <br/><br/><span i18n:translate="">Please create a new envelope and re-submit using only the correct xml file. Note that if you wish to report for more than one reporting year you have to use separate envelopes.</span>

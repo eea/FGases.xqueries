@@ -4,7 +4,7 @@ FGases.xqueries
 There are two entry points:
 
  * fgases-2015.xquery - FGases dataflow (Main module)
- * [broken] fgases-envelope.xquery - FGases dataflow envelope level check(Main module)
+ * fgases-envelope.xquery - FGases dataflow envelope level check(Main module)
 
 Run:
 
@@ -17,6 +17,6 @@ All tests:
 
     ./run_tests.sh
 
-Specififc rules only:
+Specific rules only:
 
     ./run_tests.sh 13 15
